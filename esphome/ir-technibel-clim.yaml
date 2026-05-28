@@ -1,0 +1,85 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# ir-technibel-clim.yaml
+# ESPHome — émetteur IR Technibel SCDF32C5I
+# GPIO4 → module Diymore PCB0100 (IR TX)
+# Alimentation : 5V → VCC TX, GND commun
+# ──────────────────────────────────────────────────────────────────────────────
+
+substitutions:
+  device_name: ir-technibel-clim
+  friendly_name: Clim Séjour IR
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+  includes:
+    - ./libraries/technibel_ir.h
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "${friendly_name} Fallback"
+    password: !secret ap_fallback_password
+
+captive_portal:
+
+logger:
+  level: INFO
+
+api:
+  services:
+    - service: send_command
+      variables:
+        mode: string      # "COOL" | "DRY" | "FAN" | "AUTO" | "OFF"
+        consigne: int     # 16–30
+        fan: string       # "AUTO" | "LOW" | "MED" | "HIGH"
+        t_amb: int        # température ambiante depuis capteur HA
+      then:
+        - lambda: |-
+            // Résolution du mode
+            bool power = true;
+            TechnibelMode m = TechnibelMode::COOL;
+            if      (mode == "OFF")  { power = false; }
+            else if (mode == "DRY")  { m = TechnibelMode::DRY;  }
+            else if (mode == "FAN")  { m = TechnibelMode::FAN;  }
+            else if (mode == "AUTO") { m = TechnibelMode::AUTO; }
+
+            // Résolution de la vitesse de ventilateur
+            TechnibelFan f = TechnibelFan::FAN_AUTO;
+            if      (fan == "LOW")  { f = TechnibelFan::FAN_LOW;  }
+            else if (fan == "MED")  { f = TechnibelFan::FAN_MED;  }
+            else if (fan == "HIGH") { f = TechnibelFan::FAN_HIGH; }
+
+            // Bornes de sécurité
+            uint8_t temp = (uint8_t)std::max((int32_t)16, std::min((int32_t)30, (int32_t)consigne));
+            uint8_t amb  = (uint8_t)std::max((int32_t)15, std::min((int32_t)40, (int32_t)t_amb));
+
+            // Génération et envoi de la trame IR
+            auto raw = technibel_build_raw(m, temp, f, power, amb);
+            auto call = id(ir_tx).transmit();
+            auto* data = call.get_data();
+            data->set_carrier_frequency(38000);
+            for (auto v : raw) {
+              if (v > 0) data->mark(v);
+              else       data->space(-v);
+            }
+            call.perform();
+
+            ESP_LOGI("technibel", "IR sent: mode=%s temp=%d fan=%s amb=%d power=%s",
+              mode.c_str(), (int)temp, fan.c_str(), (int)amb, power ? "ON" : "OFF");
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+remote_transmitter:
+  id: ir_tx
+  pin: GPIO4
+  carrier_duty_percent: 50%
+  non_blocking: true

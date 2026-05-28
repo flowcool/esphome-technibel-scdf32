@@ -1,0 +1,84 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# climate-technibel-ha.yaml
+# Home Assistant — entité climate MQTT pour Technibel SCDF32C5I
+#
+# Requires / Prérequis :
+#   - ESPHome device "ir-technibel-clim" intégré dans HA (API ESPHome native)
+#   - MQTT broker (ex: Mosquitto) configuré dans HA
+#   - Remplacer sensor.YOUR_TEMPERATURE_SENSOR par votre capteur HA
+#     Replace sensor.YOUR_TEMPERATURE_SENSOR with your own HA temperature sensor
+#
+# Place this file in your HA packages/ directory and restart Home Assistant.
+# Placer ce fichier dans le dossier packages/ de HA et redémarrer Home Assistant.
+#
+# HA compatibility / Compatibilité HA :
+#   HA ≥ 2026.1 : use this MQTT climate approach (climate: platform: template removed)
+#   HA < 2026.1 : a template-based approach is also possible but not provided here
+# ──────────────────────────────────────────────────────────────────────────────
+
+mqtt:
+  climate:
+    - name: "Clim Séjour"
+      unique_id: clim_sejour_technibel
+      icon: mdi:air-conditioner
+      modes:
+        - "off"
+        - cool
+        - dry
+        - fan_only
+        - auto
+      fan_modes:
+        - auto
+        - low
+        - med
+        - high
+      min_temp: 16
+      max_temp: 30
+      temp_step: 1
+      current_temperature_topic: "clim/sejour/current_temperature"
+      mode_command_topic: "clim/sejour/mode/set"
+      temperature_command_topic: "clim/sejour/temperature/set"
+      fan_mode_command_topic: "clim/sejour/fan_mode/set"
+      optimistic: true
+      temperature_unit: "C"
+      precision: 1.0
+
+automation:
+  - id: clim_sejour_envoyer_ir
+    alias: "Clim Séjour — Envoyer commande IR"
+    description: "Transmet l'état courant à l'ESP via IR dès que le climate change"
+    triggers:
+      - trigger: state
+        entity_id: climate.clim_sejour
+    conditions:
+      - condition: template
+        value_template: >
+          {{ trigger.from_state is not none
+             and trigger.from_state.state not in ['unknown', 'unavailable'] }}
+    actions:
+      - action: esphome.ir_technibel_clim_send_command
+        data:
+          mode: >
+            {{ {'off':'OFF','cool':'COOL','dry':'DRY','fan_only':'FAN','auto':'AUTO'}.get(states('climate.clim_sejour'), 'OFF') }}
+          consigne: "{{ state_attr('climate.clim_sejour', 'temperature') | int(22) }}"
+          fan: "{{ (state_attr('climate.clim_sejour', 'fan_mode') or 'auto') | upper }}"
+          t_amb: >
+            {{ states('sensor.YOUR_TEMPERATURE_SENSOR') | float(25) | round(0) | int }}
+    mode: restart
+
+  - id: clim_sejour_publier_temperature
+    alias: "Clim Séjour — Publier température ambiante"
+    description: "Alimente le topic MQTT current_temperature pour affichage dans la carte climate"
+    triggers:
+      - trigger: state
+        entity_id: sensor.YOUR_TEMPERATURE_SENSOR
+      - trigger: homeassistant
+        event: start
+    conditions: []
+    actions:
+      - action: mqtt.publish
+        data:
+          topic: "clim/sejour/current_temperature"
+          payload: "{{ states('sensor.YOUR_TEMPERATURE_SENSOR') }}"
+          retain: true
+    mode: queued

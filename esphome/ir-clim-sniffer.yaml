@@ -1,0 +1,49 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# ir-clim-sniffer.yaml
+# ESPHome — récepteur IR pour capture de trames Technibel (phase reverse engineering)
+# GPIO23 ← KY-022 / VS1838B (38kHz IR receiver) OUT
+#
+# Usage : brancher le récepteur IR face à la télécommande Technibel,
+# observer les logs ESPHome (niveau DEBUG), appuyer sur les touches.
+# Les trames Pronto brutes apparaissent dans les logs.
+# ──────────────────────────────────────────────────────────────────────────────
+
+substitutions:
+  device_name: ir-clim-sniffer
+  friendly_name: Clim Sniffer IR
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "${friendly_name} Fallback"
+    password: !secret ap_fallback_password
+
+captive_portal:
+
+logger:
+  level: DEBUG
+
+api:
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+remote_receiver:
+  pin:
+    number: GPIO23
+    inverted: true
+  dump: all
+  tolerance: 25%
+  filter: 50µs
+  idle: 4ms
