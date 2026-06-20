@@ -9,19 +9,23 @@
 ### Transmitter wiring (final build)
 
 ```
-ESP32                  Diymore PCB0100 (IR TX)
-─────                  ──────────────────────
-5V / Vin  ────────────► VCC
-GND       ────────────► GND
-GPIO4     ────────────► IN1
-
-         100µF capacitor
-         + leg on 5V, − leg on GND
-         Place as close as possible to the TX module.
+ESP32                  Discrete IR circuit
+─────                  ──────────────────
+5V / Vin  ──[47Ω]────► Anode (+, long leg)  TSAL6400
+                        Cathode (−, short leg) ──► Collector (right pin)  ┐
+                                                    2N2222 NPN              │
+GPIO4     ──[470Ω]───► Base (middle pin)     ──────────────────────────────┤
+                        Emitter (left pin)   ──────────────────────────────┘
+GND       ◄────────────────────────────────────────────────────────────────┘
 ```
 
-> **Note:** Use IN1 on the Diymore PCB0100 for channel 1. IN2 is available for a
-> second emitter if needed (e.g. pointing in a different direction).
+**2N2222 TO-92 pinout** (flat face toward you, pins pointing down):
+```
+Left = Emitter (E) · Middle = Base (B) · Right = Collector (C)
+```
+
+> **Note:** Solder or use a small breadboard for reliable connections — Dupont wires
+> on bare component leads are fragile in long-term installation.
 
 ### Sniffer wiring (capture phase only)
 
@@ -38,15 +42,33 @@ GPIO23    ◄──────────── OUT (signal pin)
 
 ### Combined wiring (sniffer + transmitter on same ESP32)
 
-Both modules can coexist on the same ESP32 during the capture phase:
+Both circuits can coexist on the same ESP32 during the capture phase:
 
 ```
-ESP32 GPIO4  ──► Diymore PCB0100 IN1    (TX)
-ESP32 GPIO23 ◄── KY-022 OUT             (RX)
-ESP32 5V     ──► Diymore PCB0100 VCC
-ESP32 3V3    ──► KY-022 VCC
-ESP32 GND    ──► Diymore GND + KY-022 GND (common ground)
+ESP32 GPIO4  ──[470Ω]──► Base 2N2222 / [47Ω] ──► TSAL6400    (TX)
+ESP32 GPIO23 ◄────────── KY-022 OUT                            (RX)
+ESP32 5V     ──────────► TSAL6400 via 47Ω resistor
+ESP32 3V3    ──────────► KY-022 VCC
+ESP32 GND    ──────────► 2N2222 Emitter + KY-022 GND (common ground)
 ```
+
+### Optional: multiple LEDs for wider coverage angle
+
+The TSAL6400 has a narrow ±17° emission angle. Adding 2–3 LEDs in parallel, each
+pointed at a slightly different angle, widens the coverage cone without changing the
+ESP32 wiring or firmware.
+
+```
+                    ┌──[47Ω]──► LED1 anode (+) → cathode ──┐
+5V ─────────────────┤                                        ├──► Collector (2N2222)
+                    └──[47Ω]──► LED2 anode (+) → cathode ──┘
+GPIO4 ──[470Ω]──► Base
+GND  ◄─────────── Emitter
+```
+
+> Each LED must have its own series resistor (47Ω each) to balance current.
+> Do not share a single resistor across parallel LEDs.
+> With 2× TSAL6400: ~70mA peak per LED, well within 2N2222 limits (600mA total).
 
 ### Final installation tips
 
@@ -62,19 +84,23 @@ ESP32 GND    ──► Diymore GND + KY-022 GND (common ground)
 ### Câblage émetteur (montage final)
 
 ```
-ESP32                  Diymore PCB0100 (IR TX)
-─────                  ──────────────────────
-5V / Vin  ────────────► VCC
-GND       ────────────► GND
-GPIO4     ────────────► IN1
-
-         Condensateur 100µF
-         + sur 5V, − sur GND
-         Placer le plus près possible du module TX.
+ESP32                  Circuit IR discret
+─────                  ──────────────────
+5V / Vin  ──[47Ω]────► Anode (+, longue patte)  TSAL6400
+                        Cathode (−, courte patte) ──► Collector (patte droite)  ┐
+                                                       2N2222 NPN                │
+GPIO4     ──[470Ω]───► Base (patte milieu)       ──────────────────────────────┤
+                        Emitter (patte gauche)    ──────────────────────────────┘
+GND       ◄─────────────────────────────────────────────────────────────────────┘
 ```
 
-> **Note :** Utiliser IN1 sur le Diymore PCB0100 pour le canal 1. IN2 est disponible
-> pour un second émetteur si nécessaire (ex : orienter dans une autre direction).
+**Brochage 2N2222 TO-92** (face plate vers toi, pattes vers le bas) :
+```
+Gauche = Emitter (E) · Milieu = Base (B) · Droite = Collector (C)
+```
+
+> **Note :** Souder ou utiliser une mini breadboard pour un montage fiable — les fils
+> Dupont sur les pattes nues des composants sont fragiles pour une installation permanente.
 
 ### Câblage sniffer (phase de capture uniquement)
 
@@ -91,15 +117,33 @@ GPIO23    ◄──────────── OUT (broche signal)
 
 ### Câblage combiné (sniffer + émetteur sur le même ESP32)
 
-Les deux modules peuvent coexister sur le même ESP32 pendant la phase de capture :
+Les deux circuits peuvent coexister sur le même ESP32 pendant la phase de capture :
 
 ```
-ESP32 GPIO4  ──► Diymore PCB0100 IN1    (TX)
-ESP32 GPIO23 ◄── KY-022 OUT             (RX)
-ESP32 5V     ──► Diymore PCB0100 VCC
-ESP32 3V3    ──► KY-022 VCC
-ESP32 GND    ──► Diymore GND + KY-022 GND (masse commune)
+ESP32 GPIO4  ──[470Ω]──► Base 2N2222 / [47Ω] ──► TSAL6400    (TX)
+ESP32 GPIO23 ◄────────── KY-022 OUT                            (RX)
+ESP32 5V     ──────────► TSAL6400 via résistance 47Ω
+ESP32 3V3    ──────────► KY-022 VCC
+ESP32 GND    ──────────► Emitter 2N2222 + KY-022 GND (masse commune)
 ```
+
+### Optionnel : plusieurs LEDs pour élargir l'angle de couverture
+
+La TSAL6400 a un angle d'émission étroit de ±17°. Ajouter 2–3 LEDs en parallèle,
+chacune orientée légèrement différemment, élargit le cône sans modifier le firmware
+ni le câblage ESP32.
+
+```
+                    ┌──[47Ω]──► LED1 anode (+) → cathode ──┐
+5V ─────────────────┤                                        ├──► Collector (2N2222)
+                    └──[47Ω]──► LED2 anode (+) → cathode ──┘
+GPIO4 ──[470Ω]──► Base
+GND  ◄─────────── Emitter
+```
+
+> Chaque LED doit avoir sa propre résistance série (47Ω chacune) pour équilibrer le courant.
+> Ne pas partager une seule résistance entre plusieurs LEDs en parallèle.
+> Avec 2× TSAL6400 : ~70mA crête par LED, largement dans les limites du 2N2222 (600mA total).
 
 ### Conseils d'installation finale
 

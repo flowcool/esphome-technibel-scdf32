@@ -11,9 +11,11 @@
 | Component | Reference | Role | Notes |
 |---|---|---|---|
 | MCU | ESP32 DevKit 30-pin | Main controller | Any ESP32 board works |
-| IR emitter | Diymore PCB0100 (2-channel) | Send IR to AC | Transistor + resistors built-in, no extra components needed |
-| Capacitor | 100µF 16V electrolytic | Power filtering | Place close to TX module on 5V/GND |
-| Cables | Dupont M/M + M/F | Wiring | 3 wires: 5V, GND, GPIO4 |
+| IR LED | TSAL6400 (5mm, 940nm) | IR emission | Any 940nm 5mm IR LED works |
+| Transistor | 2N2222 NPN (TO-92) | LED driver | BC337 also works |
+| Resistor | 47Ω | LED current limiting | 33Ω–68Ω acceptable |
+| Resistor | 470Ω | Transistor base | 330Ω–560Ω acceptable |
+| Cables | Dupont M/M + M/F | Wiring | 5 connections total |
 | Enclosure | Any | Optional | Protects the ESP32 |
 
 ### Sniffer (capture phase only — not needed in final build)
@@ -28,8 +30,8 @@
 
 ### Sourcing tips
 
-- **Diymore PCB0100**: available on AliExpress and Amazon. Search "Diymore IR transmitter PCB0100".
-  Make sure to get the **2-channel version** — it has built-in transistor and resistors for 5V operation.
+- **TSAL6400**: available on AliExpress and Amazon. Search "TSAL6400 940nm IR LED". Any 940nm 5mm IR emitter is a drop-in substitute.
+- **2N2222**: included in most BJT transistor assortment kits. BC337 is a common alternative.
 - **KY-022**: standard Arduino sensor kit component, available everywhere.
 - **ESP32 DevKit**: any 30-pin or 38-pin ESP32 board works.
 
@@ -42,9 +44,11 @@
 | Composant | Référence | Rôle | Notes |
 |---|---|---|---|
 | MCU | ESP32 DevKit 30 broches | Contrôleur principal | Tout ESP32 fonctionne |
-| Émetteur IR | Diymore PCB0100 (2 canaux) | Envoyer IR vers clim | Transistor + résistances intégrés, aucun composant supplémentaire |
-| Condensateur | 100µF 16V électrolytique | Filtrage alimentation | Placer près du module TX sur 5V/GND |
-| Câbles | Dupont M/M + M/F | Câblage | 3 fils : 5V, GND, GPIO4 |
+| LED IR | TSAL6400 (5mm, 940nm) | Émission IR | Toute LED IR 940nm 5mm convient |
+| Transistor | 2N2222 NPN (TO-92) | Driver LED | BC337 convient aussi |
+| Résistance | 47Ω | Limitation courant LED | 33Ω–68Ω acceptables |
+| Résistance | 470Ω | Base transistor | 330Ω–560Ω acceptables |
+| Câbles | Dupont M/M + M/F | Câblage | 5 connexions au total |
 | Boîtier | Au choix | Optionnel | Protège l'ESP32 |
 
 ### Sniffer (phase de capture uniquement — inutile dans le montage final)
@@ -59,7 +63,7 @@
 
 ### Conseils d'achat
 
-- **Diymore PCB0100** : disponible sur AliExpress et Amazon. Chercher "Diymore IR transmitter PCB0100".
-  Prendre la **version 2 canaux** — elle intègre transistor et résistances pour une utilisation en 5V.
+- **TSAL6400** : disponible sur AliExpress et Amazon. Chercher "TSAL6400 940nm IR LED". Toute LED IR 940nm 5mm est interchangeable.
+- **2N2222** : inclus dans la plupart des kits de transistors BJT. BC337 est une alternative courante.
 - **KY-022** : composant standard des kits capteurs Arduino, disponible partout.
 - **ESP32 DevKit** : tout board 30 ou 38 broches convient.
