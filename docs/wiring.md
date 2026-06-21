@@ -11,7 +11,7 @@
 ```
 ESP32                  Discrete IR circuit
 ─────                  ──────────────────
-5V / Vin  ──[47Ω]────► Anode (+, long leg)  TSAL6400
+3V3       ──[22Ω]────► Anode (+, long leg)  TSAL6400
                         Cathode (−, short leg) ──► Collector (right pin)  ┐
                                                     2N2222 NPN              │
 GPIO4     ──[470Ω]───► Base (middle pin)     ──────────────────────────────┤
@@ -23,6 +23,11 @@ GND       ◄──────────────────────�
 ```
 Left = Emitter (E) · Middle = Base (B) · Right = Collector (C)
 ```
+
+> **⚠️ Vin vs 3V3:** Many ESP32 DevKit boards do **not** expose USB 5V on the Vin pin —
+> Vin reads 0V when powered via USB. Use the **3V3 pin** instead and reduce the LED
+> resistor from 47Ω to **22Ω** to compensate (target current ~80mA peak).
+> If your board does supply 5V on Vin, keep 47Ω.
 
 > **Note:** Solder or use a small breadboard for reliable connections — Dupont wires
 > on bare component leads are fragile in long-term installation.
@@ -86,7 +91,7 @@ GND  ◄─────────── Emitter
 ```
 ESP32                  Circuit IR discret
 ─────                  ──────────────────
-5V / Vin  ──[47Ω]────► Anode (+, longue patte)  TSAL6400
+3V3       ──[22Ω]────► Anode (+, longue patte)  TSAL6400
                         Cathode (−, courte patte) ──► Collector (patte droite)  ┐
                                                        2N2222 NPN                │
 GPIO4     ──[470Ω]───► Base (patte milieu)       ──────────────────────────────┤
@@ -98,6 +103,11 @@ GND       ◄──────────────────────�
 ```
 Gauche = Emitter (E) · Milieu = Base (B) · Droite = Collector (C)
 ```
+
+> **⚠️ Vin vs 3V3 :** Sur de nombreux ESP32 DevKit, le pin Vin ne fournit **pas** le 5V USB —
+> il mesure 0V quand la carte est alimentée via USB. Utiliser le pin **3V3** à la place et
+> réduire la résistance LED de 47Ω à **22Ω** pour compenser (courant cible ~80mA crête).
+> Si ton board fournit bien 5V sur Vin, garder 47Ω.
 
 > **Note :** Souder ou utiliser une mini breadboard pour un montage fiable — les fils
 > Dupont sur les pattes nues des composants sont fragiles pour une installation permanente.
