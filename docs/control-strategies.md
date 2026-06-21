@@ -41,31 +41,66 @@ envoie les trames électriquement, sans émission IR physique.
 
 ```
 TSOP interne
-┌──────────┐
-│  VCC     │ ← 3.3V ou 5V (selon le board clim)
-│  GND     │ ← GND commun avec ESP32
-│  Signal  │ ← brancher ici la sortie GPIO de l'ESP32
-└──────────┘
+┌──────────────────────────────┐
+│  photodiode → filtre 38kHz   │
+│  → démodulateur → sortie     │
+└──────────────────────────────┘
+  VCC     GND     Signal (OUT)
+                      ↑
+               brancher ici
 ```
+
+> **Note :** Le TSOP n'a pas de broche "entrée" électrique accessible — la photodiode est
+> à l'intérieur du boîtier. Le seul point d'injection électrique réaliste est la broche
+> Signal (sortie), côté MCU de la clim.
 
 **Avantages :**
 - Zéro contrainte optique (angle, distance, faisceau)
+- Télécommande d'origine **préservée** — le TSOP reste actif et reçoit toujours l'IR
 - Signal électrique direct = fiabilité maximale
-- Réversible : débrancher les 3 fils suffit à revenir à l'état d'origine
+- Réversible : débrancher 3 fils suffit à revenir à l'état d'origine
 
-**Étapes :**
+**Protection contre les conflits (ESP32 + TSOP sur la même ligne) :**
+
+Ajouter une diode 1N4148 entre le GPIO et la ligne Signal :
+
+```
+ESP32 GPIO ──►|── (1N4148) ──► ligne Signal TSOP ──► MCU clim
+                                      ↑
+                               TSOP tire ici aussi
+```
+
+La diode laisse passer les commandes ESP32 vers la clim, et bloque tout retour.
+En cas d'envoi simultané (remote + ESP32), aucun composant n'est endommagé.
+
+**Étapes câblage :**
 1. Ouvrir le capot de l'unité intérieure (vis cachées sous les grilles ou caches)
-2. Localiser le module récepteur IR (petit composant noir 3 broches sur une petite carte ou directement sur le PCB principal)
+2. Localiser le module récepteur IR (petit composant noir 3 broches)
 3. Identifier les 3 broches : VCC, GND, Signal (datasheet TSOP38438 ou équivalent)
-4. Mesurer la tension VCC du récepteur (3.3V ou 5V) pour configurer l'ESP32
-5. Brancher la sortie GPIO4 de l'ESP32 sur la broche Signal du TSOP
+4. Mesurer la tension VCC du récepteur (3.3V ou 5V)
+5. Brancher : `ESP32 GPIO4 → 1N4148 → broche Signal TSOP`
 6. Brancher les GND ensemble
 7. **Ne pas alimenter le TSOP depuis l'ESP32** — le laisser alimenté par le board clim
+
+**Modification firmware (confirmée, testée sur docs ESPHome) :**
+
+Changer uniquement la config `remote_transmitter` dans le YAML — `technibel_ir.h` ne change pas :
+
+```yaml
+remote_transmitter:
+  pin:
+    number: GPIO4
+    inverted: true        # marks = LOW (comme sortie TSOP), spaces = HIGH
+  carrier_duty_percent: 100   # signal DC, pas de porteuse 38kHz
+```
+
+`carrier_duty_percent: 100` est un usage officiel ESPHome, documenté pour les émetteurs RF
+433MHz — même principe : timings bruts sans porteuse sur GPIO direct.
 
 **Points d'attention :**
 - Couper l'alimentation de la clim avant toute intervention
 - Ne pas toucher aux condensateurs ni aux circuits haute tension (partie compresseur)
-- L'unité intérieure (évaporateur) est basse tension (12V ou 5V logique) — la partie dangereuse est l'unité extérieure ou le tableau électrique
+- L'unité intérieure est basse tension (12V ou 5V logique) — la partie dangereuse est l'unité extérieure ou le tableau électrique
 - Faire une photo du câblage original avant de toucher quoi que ce soit
 
 ---
@@ -140,31 +175,65 @@ Connect the ESP32 directly to the Signal pin and send frames electrically, with 
 
 ```
 Internal TSOP
-┌──────────┐
-│  VCC     │ ← 3.3V or 5V (depending on AC board)
-│  GND     │ ← common GND with ESP32
-│  Signal  │ ← connect ESP32 GPIO output here
-└──────────┘
+┌──────────────────────────────┐
+│  photodiode → 38kHz filter   │
+│  → demodulator → output      │
+└──────────────────────────────┘
+  VCC     GND     Signal (OUT)
+                      ↑
+               connect here
 ```
+
+> **Note:** The TSOP has no accessible electrical "input" pin — the photodiode is inside the package.
+> The only practical electrical injection point is the Signal (output) pin, on the AC MCU side.
 
 **Advantages:**
 - Zero optical constraints (angle, distance, beam)
+- Original remote control **preserved** — TSOP stays active and still receives IR
 - Direct electrical signal = maximum reliability
 - Reversible: disconnect 3 wires to restore original state
 
-**Steps:**
+**Conflict protection (ESP32 + TSOP on the same line):**
+
+Add a 1N4148 diode between the GPIO and the Signal line:
+
+```
+ESP32 GPIO ──►|── (1N4148) ──► TSOP Signal line ──► AC MCU
+                                      ↑
+                               TSOP also drives here
+```
+
+The diode lets ESP32 commands through to the AC, and blocks any back-current.
+If both the remote and ESP32 send simultaneously, no component is damaged.
+
+**Wiring steps:**
 1. Open the indoor unit cover (screws hidden under grilles or covers)
-2. Locate the IR receiver module (small black 3-pin component on a sub-board or main PCB)
+2. Locate the IR receiver module (small black 3-pin component)
 3. Identify the 3 pins: VCC, GND, Signal (TSOP38438 datasheet or equivalent)
-4. Measure the VCC voltage (3.3V or 5V) to configure the ESP32 accordingly
-5. Connect ESP32 GPIO4 output to the TSOP Signal pin
+4. Measure the VCC voltage (3.3V or 5V)
+5. Connect: `ESP32 GPIO4 → 1N4148 → TSOP Signal pin`
 6. Connect GNDs together
 7. **Do not power the TSOP from the ESP32** — leave it powered by the AC board
+
+**Firmware change (confirmed against ESPHome docs):**
+
+Only the `remote_transmitter` config changes — `technibel_ir.h` stays untouched:
+
+```yaml
+remote_transmitter:
+  pin:
+    number: GPIO4
+    inverted: true        # marks = LOW (like TSOP output during IR reception), spaces = HIGH
+  carrier_duty_percent: 100   # DC signal, no 38kHz carrier
+```
+
+`carrier_duty_percent: 100` is an official ESPHome feature, documented for 433MHz RF transmitters —
+same principle: raw timings on a GPIO with no carrier modulation.
 
 **Watch out for:**
 - Cut power to the AC unit before any intervention
 - Do not touch capacitors or high-voltage circuits (compressor side)
-- The indoor unit (evaporator) is low voltage (12V or 5V logic) — the dangerous parts are the outdoor unit and the electrical panel
+- The indoor unit is low voltage (12V or 5V logic) — the dangerous parts are the outdoor unit and the electrical panel
 - Photograph original wiring before touching anything
 
 ---
