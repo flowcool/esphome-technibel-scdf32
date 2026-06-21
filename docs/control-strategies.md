@@ -11,7 +11,37 @@ du plus simple au plus invasif.
 
 ---
 
-### Piste A — ESP32 monté derrière/sous la clim ✅ (recommandée)
+### ⚡ Prérequis — Alimentation de l'ESP32
+
+**C'est le point d'entrée de tout.** Avant de choisir une piste, il faut savoir d'où vient le jus.
+
+L'unité intérieure a toujours une alimentation interne pour son propre MCU et récepteur IR :
+
+```
+220V ──► SMPS interne ──► 12V  (moteur ventilateur)
+                      └──► 5V ou 3.3V  (logique MCU, TSOP, afficheur)
+```
+
+**À faire à la première ouverture de la clim :**
+1. Mettre la clim hors tension
+2. Ouvrir le capot
+3. Mesurer les tensions disponibles sur le PCB (chercher les rails d'alimentation, souvent marqués +5V, +12V, GND)
+4. Vérifier si un rail 5V peut fournir ~150mA supplémentaires pour l'ESP32
+
+| Rail trouvé | Solution alimentation ESP32 |
+|---|---|
+| 5V interne | Brancher directement sur `3V3` ou `Vin` |
+| 12V uniquement | Ajouter un module buck 12V→5V (~1€, taille timbre-poste) |
+| Rien d'accessible | Revenir à la Piste A (prise externe) |
+
+**Si l'alim interne est exploitable → installation 100% intégrée :**
+- Zéro multiprise
+- Zéro câble visible
+- L'ESP32 vit dans la clim et s'alimente depuis la clim
+
+---
+
+### Piste A — ESP32 monté derrière/sous la clim
 
 **Principe :** installer une double prise derrière l'unité intérieure, y brancher un adaptateur USB,
 et coller la LED IR directement sous le récepteur de la clim.
@@ -146,7 +176,37 @@ from simplest to most invasive.
 
 ---
 
-### Option A — ESP32 mounted behind/under the AC unit ✅ (recommended)
+### ⚡ Prerequisite — Powering the ESP32
+
+**This is the entry point for everything.** Before choosing an option, find out where the power comes from.
+
+The indoor unit always has an internal power supply for its own MCU and IR receiver:
+
+```
+220V ──► Internal SMPS ──► 12V  (fan motor)
+                       └──► 5V or 3.3V  (MCU logic, TSOP, display)
+```
+
+**To do on first opening of the AC unit:**
+1. Cut power to the AC unit
+2. Open the cover
+3. Measure available voltages on the PCB (look for power rails, often labeled +5V, +12V, GND)
+4. Check if a 5V rail can supply ~150mA extra for the ESP32
+
+| Rail found | ESP32 power solution |
+|---|---|
+| Internal 5V | Connect directly to `Vin` or `3V3` |
+| 12V only | Add a 12V→5V buck module (~€1, stamp-sized) |
+| Nothing accessible | Fall back to Option A (external outlet) |
+
+**If the internal supply works → 100% integrated install:**
+- No power strip
+- No visible cables
+- ESP32 lives inside the AC and feeds from the AC
+
+---
+
+### Option A — ESP32 mounted behind/under the AC unit
 
 **Principle:** install a power outlet behind the indoor unit, plug in a USB adapter,
 and stick the IR LED directly under the AC receiver window.
