@@ -1,8 +1,13 @@
-# État des lieux & TODO (2026-07-04)
+# État des lieux historique & TODO (2026-07-04)
 
 > Note : ce document est un suivi de session de debug, en français uniquement
 > (contrairement aux autres docs du repo qui sont bilingues). À nettoyer/fusionner
 > dans `troubleshooting.md` une fois le problème matériel résolu.
+>
+> Mise à jour d'architecture (2026-08-10) : les mentions NAS et chemins
+> `/volume1/...` ci-dessous décrivent uniquement l'ancien environnement. Le live
+> ESPHome/Home Assistant est désormais sur une VM dédiée. Ses chemins et son mode
+> de déploiement doivent être vérifiés avant toute action.
 
 ## Ce qui fonctionne (validé de bout en bout)
 
@@ -60,7 +65,7 @@ IR custom est un composant `climate_ir` (vraie classe C++ héritant de
 lourd qu'un simple template YAML. Toujours valider avec `esphome config`
 avant de dire que c'est prêt.
 
-## Découverte annexe : repo git ≠ dossier live NAS
+## Découverte annexe historique : repo git ≠ ancien dossier live NAS
 
 `~/claude_project/esphome-technibel-scdf32` (ce repo) et
 `/volume1/docker/homeassistant/esphome/` (dossier monté dans le conteneur

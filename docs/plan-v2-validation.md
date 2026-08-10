@@ -377,7 +377,7 @@ replacement for the discrete circuit — treat it as a separate experiment, not 
      includes:
        - ./libraries/technibel_ir.h
    ```
-   Verify the `includes:` path resolves correctly from the NAS live folder, not just the repo.
+   Verify the `includes:` path resolves correctly in the dedicated VM's live ESPHome environment, not just in the repository.
 
 2. Capture two frames with the KY-022 sniffer:
    - a) **Original remote**: COOL, 24°C, FAN AUTO
