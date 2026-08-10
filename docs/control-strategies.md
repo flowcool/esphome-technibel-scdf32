@@ -91,14 +91,18 @@ TSOP interne
 - Signal électrique direct = fiabilité maximale
 - Réversible : débrancher 3 fils suffit à revenir à l'état d'origine
 
-**Protection de l'ESP32 et isolation de niveau :**
+**Protection de l'ESP32 et translation de niveau :**
 
 ⚠️ Les GPIO de l'ESP32-C3 ne sont **PAS tolérants 5V** (max 3.6V, datasheet Espressif).
 Le GPIO ne doit JAMAIS être directement connecté à une ligne pouvant atteindre 5V,
 même en mode open_drain (open_drain empêche de sourcer, mais n'empêche pas de recevoir
 du 5V via les diodes ESD internes → dommage au chip).
 
-**Circuit recommandé : BC337 comme sortie open-collector de translation de niveau.**
+**Circuit conditionnel : BC337 comme sortie open-collector de translation de niveau.**
+
+Ce branchement direct en parallèle est permis uniquement si la sortie du récepteur IR
+est confirmée open-collector/open-drain et si la logique de la clim est confirmée comme
+une basse tension isolée du secteur. Le BC337 ne fournit aucune isolation galvanique.
 
 ```
 ESP32 GPIO ──[470Ω]──┬── Base BC337
@@ -114,11 +118,11 @@ Le BC337 agit comme une sortie open-collector externe :
 - GPIO HIGH → BC337 conducteur → ligne tirée LOW (mark)
 - GPIO LOW → BC337 coupé → ligne flottante, tirée HIGH par le circuit existant
 - Aucune tension de la clim n'arrive sur le GPIO ESP32
-- Fonctionne quel que soit le VCC du TSOP (3.3V ou 5V)
+- Le collecteur accepte une ligne tirée à 3.3V ou 5V, dans les limites du BC337
 
 **Coexistence avec la télécommande :** dépend du type de sortie du TSOP.
 - TSOP open-collector : pas de modification. Les deux sinkent sur la même ligne.
-- TSOP push-pull : contention possible. Couper la piste TSOP→MCU et recombiner
+- TSOP push-pull : ne pas connecter directement le collecteur. Couper la piste TSOP→MCU et recombiner
   via wired-OR (deux diodes + pull-up). Le circuit exact dépend du PCB — à décider
   après mesures (voir plan de validation, phases 13-14).
 
@@ -128,8 +132,10 @@ Le BC337 agit comme une sortie open-collector externe :
 3. Localiser le module récepteur IR (petit composant noir 3 broches)
 4. Identifier les 3 broches : VCC, GND, Signal (datasheet du composant identifié)
 5. Mesurer la tension VCC du récepteur (3.3V ou 5V)
-6. Caractériser la sortie Signal avec analyseur logique (niveau idle, amplitude, type OC/PP)
-7. Brancher le Collector du BC337 sur la ligne Signal
+6. Relever avec l'analyseur logique uniquement la polarité et le timing ; mesurer VCC et
+   le niveau HIGH avec un instrument adapté, puis déterminer OC/PP depuis la référence
+   exacte du récepteur et l'inspection du PCB (voir phases 12-13)
+7. Seulement si la sortie est confirmée open-collector : brancher le collecteur du BC337 sur la ligne Signal
 8. Brancher les GND ensemble
 9. **Ne pas alimenter le TSOP depuis l'ESP32** — le laisser alimenté par le board clim
 
@@ -281,14 +287,18 @@ Internal TSOP
 - Direct electrical signal = maximum reliability
 - Reversible: disconnect 3 wires to restore original state
 
-**ESP32 protection and level isolation:**
+**ESP32 protection and level shifting:**
 
 ⚠️ ESP32-C3 GPIOs are **NOT 5V-tolerant** (max 3.6V, Espressif datasheet).
 The GPIO must NEVER be directly connected to a line that can reach 5V, even in
 open_drain mode (open_drain prevents sourcing, but does not prevent receiving 5V
 through internal ESD diodes → chip damage).
 
-**Recommended circuit: BC337 as open-collector level-shifting output.**
+**Conditional circuit: BC337 as an open-collector level-shifting output.**
+
+This direct parallel connection is allowed only when the IR receiver output is confirmed
+open-collector/open-drain and the AC logic is confirmed to be isolated extra-low voltage.
+The BC337 provides no galvanic isolation.
 
 ```
 ESP32 GPIO ──[470Ω]──┬── Base BC337
@@ -304,11 +314,11 @@ The BC337 acts as an external open-collector output:
 - GPIO HIGH → BC337 conducts → line pulled LOW (mark)
 - GPIO LOW → BC337 off → line floats, pulled HIGH by existing circuit
 - No voltage from the AC signal line ever reaches the ESP32 GPIO
-- Works regardless of whether TSOP VCC is 3.3V or 5V
+- The collector supports a 3.3V or 5V pulled-up line within the BC337 ratings
 
 **Remote coexistence:** depends on TSOP output type.
 - TSOP open-collector: no modification needed. Both sink on the same line.
-- TSOP push-pull: contention possible. Cut the TSOP→MCU trace and recombine
+- TSOP push-pull: do not connect the collector directly. Cut the TSOP→MCU trace and recombine
   via wired-OR (two diodes + pull-up). Exact topology depends on PCB — decide
   after measurements (see validation plan, phases 13-14).
 
@@ -318,8 +328,10 @@ The BC337 acts as an external open-collector output:
 3. Locate the IR receiver module (small black 3-pin component)
 4. Identify the 3 pins: VCC, GND, Signal (from identified component's datasheet)
 5. Measure VCC voltage (3.3V or 5V)
-6. Characterize Signal output with logic analyzer (idle level, amplitude, OC/PP type)
-7. Connect BC337 Collector to the Signal line
+6. Use the logic analyzer only for polarity and timing; measure VCC and the HIGH level
+   with a suitable instrument, then determine OC/PP from the receiver's exact reference
+   and PCB inspection (see phases 12-13)
+7. Only for a confirmed open-collector output: connect the BC337 collector to the Signal line
 8. Connect GNDs together
 9. **Do not power the TSOP from the ESP32** — leave it powered by the AC board
 

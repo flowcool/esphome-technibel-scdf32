@@ -18,7 +18,7 @@ RS ou un autre distributeur agréé.
 |---:|---|---|---|---|---|
 | 10 | Résistance LED IR | Vishay / BC Components | `MRS25000C4709FRP00` | 47 Ω, 1 %, 0,6 W, traversante | Piste A |
 | 5 | Charge de test 5 V | Vishay / BC Components | `MRS25000C1000FRP00` | 100 Ω, 1 %, 0,6 W, traversante | Validation |
-| 20 | Résistance de base BC337 | Yageo | `MFR-25FBF52-470R` | 470 Ω, 1 %, 0,25 W | A et B1 |
+| 20 | Résistance de base BC337 | Yageo | `MFR-50SFRF52-470R` | 470 Ω, 1 %, 0,5 W, AEC-Q200 | A et B1 |
 | 20 | Résistance LED visible | Yageo | `MFR-25FBF52-330R` | 330 Ω, 1 %, 0,25 W | Validation |
 | 20 | Pull-down base-émetteur | Yageo | `MFR-25FBF52-10K` | 10 kΩ, 1 %, 0,25 W | A et B1 |
 | 10 | Pull-up éventuel | Yageo | `MFR-25FBF52-4K7` | 4,7 kΩ, 1 %, 0,25 W | B1 conditionnel |
@@ -26,8 +26,8 @@ RS ou un autre distributeur agréé.
 | 20 | Découplage local | Vishay / BC Components | `K104K15X7RF5TL2` | 100 nF, 50 V, X7R, radial | A et B1 |
 | 10 | Réservoir alimentation | Panasonic | `EEU-FR1E101` | 100 µF, 25 V, 105 °C, low ESR | A et B1 |
 | 10 | Diode Schottky alimentation | Vishay | `1N5817-E3/54` | 1 A, traversante | Alimentation conditionnelle |
-| 10 | Diode Schottky signal | Vishay | `BAT85S-E3/54` | Diode signal à faible chute | B1 conditionnel |
-| 10 | Transistor NPN authentique | onsemi | `BC337-40ZL1G` | BC337-40, TO-92 | Référence A et B1 |
+| 10 | Diode Schottky signal | Vishay | `BAT41-TR` | 100 V, 100 mA, DO-35 traversant | B1 conditionnel |
+| 10 | Transistor NPN authentique | onsemi | `BC33740BU` | BC337-40, 45 V, 800 mA, TO-92, conditionnement vrac | Référence A et B1 |
 | 10 | LED IR authentique | Vishay | `TSAL6400` | 940 nm, angle ±25°, traversante | Piste A |
 
 ### Pourquoi conserver des composants authentiques de référence
@@ -160,8 +160,11 @@ Le choix dépendra de :
 - [Vishay MRS25 — 47 Ω, 0,6 W](https://www.mouser.fr/ProductDetail/Vishay-BC-Components/MRS25000C4709FRP00)
 - [Vishay MRS25 — 100 Ω, 0,6 W](https://www.mouser.fr/ProductDetail/Vishay-BC-Components/MRS25000C1000FRP00)
 - [Yageo 10 kΩ, 0,25 W, 1 %](https://www.mouser.fr/fr/ProductDetail/YAGEO/MFR-25FBF52-10K)
+- [Yageo MFR-50SFRF52-470R — 470 Ω, 0,5 W, 1 %, AEC-Q200](https://www.mouser.fr/ProductDetail/YAGEO/MFR-50SFRF52-470R)
 - [Vishay 100 nF, 50 V, X7R](https://www.mouser.fr/ProductDetail/Vishay-BC-Components/K104K15X7RF5TL2)
 - [Panasonic FR 100 µF, 25 V](https://www.mouser.fr/fr/ProductDetail/Panasonic/EEU-FR1E101)
+- [onsemi BC33740BU — BC337-40 traversant](https://www.mouser.fr/ProductDetail/onsemi/BC33740BU)
+- [Vishay BAT41-TR — Schottky signal traversante](https://www.mouser.fr/ProductDetail/Vishay-Semiconductors/BAT41-TR)
 - [Vishay TSAL6400](https://www.mouser.fr/ProductDetail/Vishay-Semiconductors/TSAL6400)
 - [JST série XH](https://www.mouser.fr/c/connectors/?series=XH)
 - [TRACO Power TSR 1-2450](https://www.mouser.fr/ProductDetail/TRACO-Power/TSR-1-2450)

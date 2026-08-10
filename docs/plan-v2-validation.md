@@ -82,9 +82,11 @@ well above average draw. Use a USB power supply rated ≥500mA (not 200mA).
 When powering from an internal AC rail, prevent simultaneous USB power (use a diode,
 jumper, or explicit disconnect procedure before connecting USB for flashing/debug).
 
-### Key constraint: `technibel_ir.h` is frozen
+### Key constraint: protocol encoding is frozen
 
-The C++ protocol implementation does not change. All work is in YAML config and hardware.
+Frame encoding and checksum logic in `technibel_ir.h` do not change. Physical timing
+constants may change only after an instrumented comparison with the original remote.
+All other work is in YAML configuration and hardware.
 
 ---
 
@@ -547,11 +549,15 @@ BEFORE connecting any USB-connected instrument (logic analyzer, PC, oscilloscope
 and potentially mains earth) to a non-isolated GND can cause short circuits, equipment
 damage, or electric shock.
 
-**Method**: inspection-first, measurement-second. Voltage measurements under power
-between logic and mains are themselves a hazardous operation — use them only to confirm
-what inspection has already strongly suggested.
+**Method**: inspection-first, documentation-second, resistance measurement only as a
+supporting check. A standard multimeter cannot certify galvanic isolation or insulation
+integrity. Do not perform live measurements between logic and mains as part of this plan.
 
-**Step 1 — Inspection (AC unit powered OFF, breaker OFF, wait 5 minutes for caps to discharge)**:
+**Step 1 — Inspection (AC unit powered OFF and breaker locked OFF)**:
+
+Wait at least the discharge time specified by the service manual. In the absence of a
+service manual, waiting 5 minutes is a precaution, not proof that every capacitor is
+discharged. Do not touch or probe the primary-side power supply section.
 
 1. Photograph the AC unit's main PCB power supply section
 2. Identify the power supply topology:
@@ -561,8 +567,10 @@ what inspection has already strongly suggested.
    - Look for a **creepage gap** — a visible slot or unmilled area on the PCB separating
      the mains side from the logic side. Many isolated SMPS designs have this.
    - Note component references: the SMPS IC reference can confirm isolated vs non-isolated topology
-3. If a clear isolation boundary is visible (transformer + optocoupler + creepage gap):
-   → proceed to Step 2 for confirmation
+3. If a clear isolation boundary is visible, identify every conductor crossing it
+   (transformer, optocoupler, safety capacitor, connector, shield or mounting hardware)
+   and confirm the power-supply topology from component datasheets or the service manual.
+   Then proceed to Step 2 for a supporting check.
 4. If no isolation boundary is found, or if the topology is unclear:
    → **treat the logic as mains-referenced. Do NOT proceed to voltage measurements.**
 
@@ -573,17 +581,22 @@ what inspection has already strongly suggested.
    - AC board logic GND and mains PE (earth) terminal on the AC unit's terminal block
    - AC board logic GND and mains L terminal
    - AC board logic GND and mains N terminal
-3. All readings should be > 1MΩ (typically open/OL on a well-isolated design).
-   A reading < 100kΩ suggests a connection (may be through Y-capacitors — typically
-   2.2nF to 4.7nF, which read as open on DC resistance but pass AC).
+3. Readings from logic GND to L and N should normally be > 1MΩ (often open/OL).
+   A lower reading is a stop condition until its path is understood. Logic GND to PE
+   may be low in an intentionally earth-bonded isolated secondary, but that bond must
+   be traced and documented rather than treated automatically as a failure. An OL reading is only supporting
+   evidence: a DMM uses a low test voltage and cannot prove insulation strength, and
+   safety capacitors may appear open in a DC resistance test.
 
 **Gatekeeper 12**:
 
 | Test | Pass | Fail action |
 |------|------|-------------|
-| Transformer + optocoupler + creepage gap visible | Strong isolation evidence | No clear boundary → treat as non-isolated |
-| Resistance logic GND to L/N/PE: all > 1MΩ | Confirms isolation | < 100kΩ to any mains terminal → **non-isolated, STOP** |
-| Both inspection AND resistance check pass | Safe for USB instruments | Either fails → see below |
+| Isolation boundary and every crossing conductor identified | Strong isolation evidence | Unclear topology → treat as non-isolated |
+| Datasheet/service information confirms an isolated secondary | Architecture confirmed | No confirmation → treat as non-isolated |
+| Resistance logic GND to L and N: both > 1MΩ | Supporting check passes | ≤1MΩ or unstable reading → **STOP and explain the path** |
+| Logic GND to PE measured and any low-resistance bond explained | Earth relationship known | Unexplained path → **STOP** |
+| Architecture confirmed AND supporting check passes | Eligible for low-voltage USB probing | Either condition missing → no USB instrument |
 
 **If isolation is NOT confirmed**:
 
@@ -594,8 +607,9 @@ what inspection has already strongly suggested.
   are rated for the expected voltage. "Battery-powered" alone is not sufficient —
   the probe and input ratings must match the hazard.
 - **Consider engaging a qualified electrician** to verify the supply topology.
-- If isolation cannot be established, B1 can still proceed using Piste A (external IR)
-  with the ESP32 powered independently from the AC unit (no common ground).
+- If isolation cannot be established, continue with Piste A (external IR). B1 is halted
+  unless a qualified person designs a complete galvanically isolated interface and
+  isolated power solution. A common-ground BC337 interface is forbidden in that case.
 
 ---
 
@@ -615,30 +629,38 @@ rated for the voltage category.
 5. Capture and note:
    - Idle state (HIGH or LOW?)
    - Active state during IR reception
-   - Signal amplitude (3.3V or 5V?)
    - Timing — compare with Phase 8 captures
 
 This tells us polarity and timing. It does NOT reliably tell us the output type
 (open-collector vs push-pull). A logic analyzer shows voltage levels but cannot
 distinguish between "actively driven HIGH" and "pulled HIGH through a resistor".
 
+Before connecting channel 0, verify the analyzer's absolute maximum input voltage and
+logic thresholds from its actual documentation. If the signal may exceed that rating,
+use a correctly calculated divider or buffer. "24 MHz USB logic analyzer" does not by
+itself imply 5V-tolerant inputs.
+
+A digital logic analyzer does not measure analog amplitude. Measure receiver VCC and
+the idle HIGH voltage separately with a suitable multimeter or oscilloscope only after
+Phase 12 has passed; do not infer 3.3V versus 5V from the analyzer trace display.
+
 **Part B — Output type determination (in order of reliability)**:
 
-1. **Datasheet** (best): identify the exact TSOP reference from Phase 11.
-   Read the datasheet's output stage description. Most TSOP38xxx are push-pull
-   (active HIGH and active LOW). VS1838B is typically push-pull.
-   The datasheet is the authoritative answer.
+1. **Datasheet** (best): identify the exact receiver reference from Phase 11 and read
+   its output-stage description or internal block diagram. Do not infer the architecture
+   from a similar-looking TSOP38xxx or VS1838B clone.
 
 2. **PCB inspection** (if datasheet insufficient): examine the circuit around the
    TSOP output pin on the AC board (AC unit OFF, caps discharged):
-   - Is there an external pull-up resistor between Signal and VCC? → suggests open-collector
+   - Is there an external pull-up resistor between Signal and VCC? → supports, but does
+     not prove, an open-collector/open-drain hypothesis
    - Is there a series resistor between Signal and the MCU input? → common with push-pull
    - Is the trace direct from TSOP to MCU? → likely push-pull, relying on TSOP's driver
 
 3. **Resistance measurement** (AC unit OFF, caps discharged, component in-circuit):
    - Measure resistance from TSOP Signal pin to VCC: if you read a discrete value
-     (1kΩ–100kΩ), there is a pull-up resistor → open-collector output.
-   - If you read very high/OL → no external pull-up → likely push-pull.
+     (1kΩ–100kΩ), there may be an external pull-up or another parallel path.
+   - If you read very high/OL, no external pull-up has been demonstrated.
    - Caveat: in-circuit resistance includes parallel paths through the MCU input.
      Use this as supporting evidence, not definitive proof.
 
@@ -648,7 +670,7 @@ distinguish between "actively driven HIGH" and "pulled HIGH through a resistor".
 |------|------|-------------|
 | Signal visible on logic analyzer during remote command | Signal pin correct | Wrong pin — re-check |
 | Idle = HIGH, marks = LOW (active-low) | Standard TSOP behavior | Note actual polarity for firmware config |
-| Signal amplitude noted (3.3V or 5V) | Level known | Unexpected level — investigate |
+| Receiver VCC and idle HIGH measured with suitable instrument | Level known | Unexpected level — investigate |
 | Timing matches reverse engineering captures | TSOP = demodulated protocol | Different timing — re-analyze |
 | Output type determined (datasheet or inspection) | Architecture known | If still ambiguous, assume push-pull (safer assumption for circuit design) |
 
@@ -663,7 +685,9 @@ The GPIO must NEVER be directly connected to a line that can reach 5V, regardles
 open_drain mode (open_drain prevents driving 5V, but does not prevent receiving 5V —
 ESD protection diodes inside the chip will conduct and damage it).
 
-**Correct approach: use a BC337 as external open-collector level shifter.**
+**Interface A — only if the receiver output is confirmed open-collector/open-drain:**
+
+Use a BC337 as an additional open-collector level shifter.
 
 ```
 ESP32 GPIO3 ──[470Ω]──┬── Base BC337
@@ -679,7 +703,8 @@ The BC337 acts as an external open-collector output:
 - GPIO HIGH → BC337 conducts → Collector pulled LOW (mark)
 - GPIO LOW → BC337 off → Collector floats, pulled HIGH by existing circuit
 - No voltage from the AC signal line ever reaches the ESP32 GPIO
-- Works regardless of whether TSOP VCC is 3.3V or 5V
+- The collector can interface with a 3.3V or 5V pulled-up signal, within BC337 ratings
+- This does not provide galvanic isolation; ESP32 and AC logic grounds are common
 
 **Firmware**:
 
@@ -705,8 +730,9 @@ remote_transmitter:
 If TSOP output is **open-collector**: no modification needed. The TSOP and BC337
 both sink on the same line; pull-up provides HIGH. Both can pull LOW independently.
 
-If TSOP output is **push-pull**: the TSOP actively drives HIGH when idle, and the
-BC337 must sink against it during marks. This creates contention. Solutions:
+If the receiver output is **push-pull**, do not connect the BC337 collector directly
+to the intact line: the receiver actively drives HIGH when idle and would contend with
+the BC337 during marks. Required approach:
 - Cut the trace between TSOP output and MCU input
 - Insert both sources through diodes into the MCU input with a pull-up (wired-OR)
 - The exact topology depends on PCB layout — decide after Phase 13 measurements
@@ -729,16 +755,16 @@ This phase produces a design decision, not a test result.
 
 **Goal**: validate the injection circuit BEFORE permanent installation.
 
-**Power safety**: the XIAO must be powered without creating a ground loop through
-the PC to mains earth. Options (choose one):
+**Power safety**: this phase is authorized only after Phase 12 has confirmed an isolated
+low-voltage logic domain. A floating USB charger or battery-powered laptop does not make
+a mains-referenced common ground safe; connecting it can raise the XIAO, USB connector,
+laptop chassis and programming cable to a hazardous potential.
 
-- **Dedicated USB charger** (no data connection to PC) — the charger is floating
-  relative to the AC board. This is the safest option.
-- **Laptop on battery** (physically unplugged from mains) — no earth path.
-  Verify the laptop is truly disconnected, not just on battery with charger plugged in.
-- **Do NOT** use a desktop PC or a plugged-in laptop as USB power source if the AC
-  board's isolation status is uncertain — this creates the exact ground path Phase 12
-  was designed to prevent.
+- Use a dedicated, reputable USB charger with no PC data connection during the test.
+- Do not connect a desktop PC, laptop or USB logic analyzer while the B1 common-ground
+  interface is attached to the AC.
+- If Phase 12 did not pass, do not perform this phase with the BC337 circuit. Return to
+  Piste A or obtain a reviewed galvanically isolated interface and isolated power design.
 
 If the XIAO needs OTA flashing during this phase, flash first via the safe USB source
 (charger + WiFi OTA), then disconnect USB and power from the charger only.
@@ -840,10 +866,10 @@ If the XIAO needs OTA flashing during this phase, flash first via the safe USB s
 | 9 | AC responds + frame repeat test | Beep + all 4 modes + OFF | Yes |
 | 10 | Piste A soldered as reference | Same tests pass on PCB | Recommended |
 | 11 | AC unit visual inspection | TSOP identified, photographed | Yes |
-| 12 | Electrical safety verification | Inspection + resistance confirm isolation | Yes |
+| 12 | Electrical safety verification | Isolated architecture confirmed + resistance check supports it | Yes |
 | 13 | TSOP signal characterized | Polarity, amplitude known; output type from datasheet | Yes |
 | 14 | B1 circuit designed from measurements | Schematic reviewed (BC337 level shifter) | Yes |
-| 15 | B1 bench test (floating USB power) | AC responds via injection | Yes |
+| 15 | B1 bench test (only on confirmed isolated logic) | AC responds via injection | Yes |
 | 16 | Permanent install designed | Power, mechanical, thermal OK | Yes |
 | 17 | Long-term validation | 1 week stable operation | Yes |
 
@@ -855,7 +881,7 @@ If the XIAO needs OTA flashing during this phase, flash first via the safe USB s
 | `esphome/ir-clim-sniffer-c3.yaml` | Create — sniffer for 2nd XIAO (if needed) | 7 |
 | `docs/wiring.md` | Update — add XIAO C3 wiring section, fix old diode schematic | 5 |
 | `docs/bom.md` | Update — add XIAO C3, BC337-40, decoupling caps, pull-down resistor | 1 |
-| `docs/control-strategies.md` | Update — fix B1 injection circuit (BC337 isolator, not direct diode) | 14 |
+| `docs/control-strategies.md` | Update — make B1 interface conditional and remove direct GPIO injection | 14 |
 | `esphome/ir-technibel-clim.yaml` | Keep as-is — ESP32 DevKit reference | — |
 | `esphome/libraries/technibel_ir.h` | **DO NOT TOUCH** | — |
 
