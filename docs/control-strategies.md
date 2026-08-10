@@ -23,15 +23,16 @@ L'unité intérieure a toujours une alimentation interne pour son propre MCU et 
 ```
 
 **À faire à la première ouverture de la clim :**
-1. Mettre la clim hors tension
+1. Couper au disjoncteur, attendre 5 min (condensateurs)
 2. Ouvrir le capot
-3. Mesurer les tensions disponibles sur le PCB (chercher les rails d'alimentation, souvent marqués +5V, +12V, GND)
-4. Vérifier si un rail 5V peut fournir ~150mA supplémentaires pour l'ESP32
+3. Vérifier l'isolation secteur/logique (voir plan phase 12)
+4. Mesurer les tensions disponibles sur le PCB (chercher les rails d'alimentation, souvent marqués +5V, +12V, GND)
+5. Évaluer la capacité du rail (≥500mA de marge pour un XIAO avec WiFi)
 
 | Rail trouvé | Solution alimentation ESP32 |
 |---|---|
-| 5V interne | Brancher directement sur `3V3` ou `Vin` |
-| 12V uniquement | Ajouter un module buck 12V→5V (~1€, taille timbre-poste) |
+| 5V interne, capacité suffisante | Brancher sur la broche 5V du XIAO via diode Schottky (SS14, anode côté rail, cathode côté XIAO — recommandation Seeed pour alimentation externe par broche 5V). **Ne JAMAIS brancher 5V sur la broche 3V3** — cela détruit le régulateur. |
+| 12V uniquement | Ajouter un module buck 12V→5V (~1€, taille timbre-poste) → broche 5V via diode |
 | Rien d'accessible | Revenir à la Piste A (prise externe) |
 
 **Si l'alim interne est exploitable → installation 100% intégrée :**
@@ -90,47 +91,73 @@ TSOP interne
 - Signal électrique direct = fiabilité maximale
 - Réversible : débrancher 3 fils suffit à revenir à l'état d'origine
 
-**Protection contre les conflits (ESP32 + TSOP sur la même ligne) :**
+**Protection de l'ESP32 et isolation de niveau :**
 
-Ajouter une diode 1N4148 entre le GPIO et la ligne Signal :
+⚠️ Les GPIO de l'ESP32-C3 ne sont **PAS tolérants 5V** (max 3.6V, datasheet Espressif).
+Le GPIO ne doit JAMAIS être directement connecté à une ligne pouvant atteindre 5V,
+même en mode open_drain (open_drain empêche de sourcer, mais n'empêche pas de recevoir
+du 5V via les diodes ESD internes → dommage au chip).
+
+**Circuit recommandé : BC337 comme sortie open-collector de translation de niveau.**
 
 ```
-ESP32 GPIO ──►|── (1N4148) ──► ligne Signal TSOP ──► MCU clim
-                                      ↑
-                               TSOP tire ici aussi
+ESP32 GPIO ──[470Ω]──┬── Base BC337
+                      │
+                    [10kΩ] ← pull-down (OFF au boot)
+                      │
+GND ─────────────────┴── Emitter BC337
+
+Ligne Signal vers MCU clim ── Collector BC337
 ```
 
-La diode laisse passer les commandes ESP32 vers la clim, et bloque tout retour.
-En cas d'envoi simultané (remote + ESP32), aucun composant n'est endommagé.
+Le BC337 agit comme une sortie open-collector externe :
+- GPIO HIGH → BC337 conducteur → ligne tirée LOW (mark)
+- GPIO LOW → BC337 coupé → ligne flottante, tirée HIGH par le circuit existant
+- Aucune tension de la clim n'arrive sur le GPIO ESP32
+- Fonctionne quel que soit le VCC du TSOP (3.3V ou 5V)
+
+**Coexistence avec la télécommande :** dépend du type de sortie du TSOP.
+- TSOP open-collector : pas de modification. Les deux sinkent sur la même ligne.
+- TSOP push-pull : contention possible. Couper la piste TSOP→MCU et recombiner
+  via wired-OR (deux diodes + pull-up). Le circuit exact dépend du PCB — à décider
+  après mesures (voir plan de validation, phases 13-14).
 
 **Étapes câblage :**
-1. Ouvrir le capot de l'unité intérieure (vis cachées sous les grilles ou caches)
-2. Localiser le module récepteur IR (petit composant noir 3 broches)
-3. Identifier les 3 broches : VCC, GND, Signal (datasheet TSOP38438 ou équivalent)
-4. Mesurer la tension VCC du récepteur (3.3V ou 5V)
-5. Brancher : `ESP32 GPIO4 → 1N4148 → broche Signal TSOP`
-6. Brancher les GND ensemble
-7. **Ne pas alimenter le TSOP depuis l'ESP32** — le laisser alimenté par le board clim
+1. Vérifier l'isolation électrique de la logique clim (voir plan, phase 12)
+2. Ouvrir le capot de l'unité intérieure (vis cachées sous les grilles ou caches)
+3. Localiser le module récepteur IR (petit composant noir 3 broches)
+4. Identifier les 3 broches : VCC, GND, Signal (datasheet du composant identifié)
+5. Mesurer la tension VCC du récepteur (3.3V ou 5V)
+6. Caractériser la sortie Signal avec analyseur logique (niveau idle, amplitude, type OC/PP)
+7. Brancher le Collector du BC337 sur la ligne Signal
+8. Brancher les GND ensemble
+9. **Ne pas alimenter le TSOP depuis l'ESP32** — le laisser alimenté par le board clim
 
-**Modification firmware (confirmée, testée sur docs ESPHome) :**
+**Modification firmware :**
 
 Changer uniquement la config `remote_transmitter` dans le YAML — `technibel_ir.h` ne change pas :
 
 ```yaml
 remote_transmitter:
   pin:
-    number: GPIO4
-    inverted: true        # marks = LOW (comme sortie TSOP), spaces = HIGH
+    number: GPIO3
+    inverted: false       # le BC337 ajoute une inversion logique :
+                          # GPIO HIGH → transistor ON → ligne LOW (mark)
+                          # à déterminer expérimentalement — essayer false puis true
   carrier_duty_percent: 100   # signal DC, pas de porteuse 38kHz
+  non_blocking: false
+  rmt_symbols: 96
 ```
 
 `carrier_duty_percent: 100` est un usage officiel ESPHome, documenté pour les émetteurs RF
 433MHz — même principe : timings bruts sans porteuse sur GPIO direct.
 
 **Points d'attention :**
-- Couper l'alimentation de la clim avant toute intervention
-- Ne pas toucher aux condensateurs ni aux circuits haute tension (partie compresseur)
-- L'unité intérieure est basse tension (12V ou 5V logique) — la partie dangereuse est l'unité extérieure ou le tableau électrique
+- Couper l'alimentation de la clim au disjoncteur avant toute intervention
+- Ne pas toucher aux condensateurs ni aux circuits haute tension
+- **Ne PAS supposer que la logique de l'unité intérieure est isolée du secteur** — certaines
+  alimentations d'électroménager référencent la masse logique au secteur. Vérifier l'isolation
+  avant de connecter tout instrument USB (analyseur logique, oscilloscope) — voir plan phase 12
 - Faire une photo du câblage original avant de toucher quoi que ce soit
 
 ---
@@ -188,15 +215,16 @@ The indoor unit always has an internal power supply for its own MCU and IR recei
 ```
 
 **To do on first opening of the AC unit:**
-1. Cut power to the AC unit
+1. Cut power at the breaker, wait 5 min (capacitors)
 2. Open the cover
-3. Measure available voltages on the PCB (look for power rails, often labeled +5V, +12V, GND)
-4. Check if a 5V rail can supply ~150mA extra for the ESP32
+3. Verify mains/logic isolation (see validation plan phase 12)
+4. Measure available voltages on the PCB (look for power rails, often labeled +5V, +12V, GND)
+5. Evaluate rail capacity (≥500mA headroom needed for XIAO with WiFi)
 
 | Rail found | ESP32 power solution |
 |---|---|
-| Internal 5V | Connect directly to `Vin` or `3V3` |
-| 12V only | Add a 12V→5V buck module (~€1, stamp-sized) |
+| Internal 5V, sufficient capacity | Connect to XIAO 5V pin via Schottky diode (SS14, anode toward rail, cathode toward XIAO — per Seeed recommendation for external power via 5V pin). **NEVER connect 5V to the 3V3 pin** — this destroys the regulator. |
+| 12V only | Add a 12V→5V buck module (~€1, stamp-sized) → 5V pin via diode |
 | Nothing accessible | Fall back to Option A (external outlet) |
 
 **If the internal supply works → 100% integrated install:**
@@ -253,47 +281,73 @@ Internal TSOP
 - Direct electrical signal = maximum reliability
 - Reversible: disconnect 3 wires to restore original state
 
-**Conflict protection (ESP32 + TSOP on the same line):**
+**ESP32 protection and level isolation:**
 
-Add a 1N4148 diode between the GPIO and the Signal line:
+⚠️ ESP32-C3 GPIOs are **NOT 5V-tolerant** (max 3.6V, Espressif datasheet).
+The GPIO must NEVER be directly connected to a line that can reach 5V, even in
+open_drain mode (open_drain prevents sourcing, but does not prevent receiving 5V
+through internal ESD diodes → chip damage).
+
+**Recommended circuit: BC337 as open-collector level-shifting output.**
 
 ```
-ESP32 GPIO ──►|── (1N4148) ──► TSOP Signal line ──► AC MCU
-                                      ↑
-                               TSOP also drives here
+ESP32 GPIO ──[470Ω]──┬── Base BC337
+                      │
+                    [10kΩ] ← pull-down (OFF at boot)
+                      │
+GND ─────────────────┴── Emitter BC337
+
+Signal line to AC MCU ── Collector BC337
 ```
 
-The diode lets ESP32 commands through to the AC, and blocks any back-current.
-If both the remote and ESP32 send simultaneously, no component is damaged.
+The BC337 acts as an external open-collector output:
+- GPIO HIGH → BC337 conducts → line pulled LOW (mark)
+- GPIO LOW → BC337 off → line floats, pulled HIGH by existing circuit
+- No voltage from the AC signal line ever reaches the ESP32 GPIO
+- Works regardless of whether TSOP VCC is 3.3V or 5V
+
+**Remote coexistence:** depends on TSOP output type.
+- TSOP open-collector: no modification needed. Both sink on the same line.
+- TSOP push-pull: contention possible. Cut the TSOP→MCU trace and recombine
+  via wired-OR (two diodes + pull-up). Exact topology depends on PCB — decide
+  after measurements (see validation plan, phases 13-14).
 
 **Wiring steps:**
-1. Open the indoor unit cover (screws hidden under grilles or covers)
-2. Locate the IR receiver module (small black 3-pin component)
-3. Identify the 3 pins: VCC, GND, Signal (TSOP38438 datasheet or equivalent)
-4. Measure the VCC voltage (3.3V or 5V)
-5. Connect: `ESP32 GPIO4 → 1N4148 → TSOP Signal pin`
-6. Connect GNDs together
-7. **Do not power the TSOP from the ESP32** — leave it powered by the AC board
+1. Verify electrical isolation of the AC logic board (see plan, phase 12)
+2. Open the indoor unit cover (screws hidden under grilles or covers)
+3. Locate the IR receiver module (small black 3-pin component)
+4. Identify the 3 pins: VCC, GND, Signal (from identified component's datasheet)
+5. Measure VCC voltage (3.3V or 5V)
+6. Characterize Signal output with logic analyzer (idle level, amplitude, OC/PP type)
+7. Connect BC337 Collector to the Signal line
+8. Connect GNDs together
+9. **Do not power the TSOP from the ESP32** — leave it powered by the AC board
 
-**Firmware change (confirmed against ESPHome docs):**
+**Firmware change:**
 
 Only the `remote_transmitter` config changes — `technibel_ir.h` stays untouched:
 
 ```yaml
 remote_transmitter:
   pin:
-    number: GPIO4
-    inverted: true        # marks = LOW (like TSOP output during IR reception), spaces = HIGH
+    number: GPIO3
+    inverted: false       # BC337 adds a logic inversion:
+                          # GPIO HIGH → transistor ON → line LOW (mark)
+                          # determine experimentally — try false then true
   carrier_duty_percent: 100   # DC signal, no 38kHz carrier
+  non_blocking: false
+  rmt_symbols: 96
 ```
 
 `carrier_duty_percent: 100` is an official ESPHome feature, documented for 433MHz RF transmitters —
 same principle: raw timings on a GPIO with no carrier modulation.
 
 **Watch out for:**
-- Cut power to the AC unit before any intervention
-- Do not touch capacitors or high-voltage circuits (compressor side)
-- The indoor unit is low voltage (12V or 5V logic) — the dangerous parts are the outdoor unit and the electrical panel
+- Cut power to the AC unit at the breaker before any intervention
+- Do not touch capacitors or high-voltage circuits
+- **Do NOT assume the indoor unit's logic is isolated from mains** — some appliance PSUs
+  reference logic ground to mains. Verify isolation before connecting any USB instrument
+  (logic analyzer, oscilloscope) — see validation plan phase 12
 - Photograph original wiring before touching anything
 
 ---
