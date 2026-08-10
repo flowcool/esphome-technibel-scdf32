@@ -49,6 +49,6 @@ IR control for the Technibel SCDF32C5I air conditioner through ESPHome and Home 
 - Filter work with `--metadata-field project=esphome-technibel-scdf32`.
 - Every created issue must include `--metadata '{"project":"esphome-technibel-scdf32"}'`; use `--set-metadata project=esphome-technibel-scdf32` only when updating an existing issue.
 - Use Beads for durable task tracking; `docs/BACKLOG-legacy.md` is not the live tracker.
-- For parallel agents, split work into non-overlapping issues, express ordering with dependencies, and claim each issue atomically with `bd update <id> --claim` before editing.
-- Use a separate review issue for cross-review. The reviewer must not be the implementation issue owner and records findings as notes or discovered follow-up issues.
+- Execute implementation issues sequentially, keep at most one project issue `in_progress`, and claim it atomically with `bd update <id> --claim` before editing.
+- When Florent requests a review or the risk justifies independent verification, create a self-contained handoff to a fresh agent/session. The reviewer uses a separate issue and records findings as notes or `discovered-from` follow-up issues.
 - See `docs/multi-agent-beads.md` for the project workflow.
