@@ -12,30 +12,39 @@ RS ou un autre distributeur agréé.
 > récepteur IR, le niveau logique, son type de sortie et l'isolation électrique de
 > la carte du climatiseur.
 
-## 1. Commande principale
+## 1. Commande principale — reçue
 
-| Qté | Fonction | Fabricant | Référence fabricant | Caractéristiques | Usage |
-|---:|---|---|---|---|---|
-| 10 | Résistance LED IR | Vishay / BC Components | `MRS25000C4709FRP00` | 47 Ω, 1 %, 0,6 W, traversante | Piste A |
-| 5 | Charge de test 5 V | Vishay / BC Components | `MRS25000C1000FRP00` | 100 Ω, 1 %, 0,6 W, traversante | Validation |
-| 20 | Résistance de base BC337 | Yageo | `MFR-50SFRF52-470R` | 470 Ω, 1 %, 0,5 W, AEC-Q200 | A et B1 |
-| 20 | Résistance LED visible | Yageo | `MFR-25FBF52-330R` | 330 Ω, 1 %, 0,25 W | Validation |
-| 20 | Pull-down base-émetteur | Yageo | `MFR-25FBF52-10K` | 10 kΩ, 1 %, 0,25 W | A et B1 |
-| 10 | Pull-up éventuel | Yageo | `MFR-25FBF52-4K7` | 4,7 kΩ, 1 %, 0,25 W | B1 conditionnel |
-| 10 | Protection/test signal | Yageo | `MFR-25FBF52-1K` | 1 kΩ, 1 %, 0,25 W | B1 conditionnel |
-| 20 | Découplage local | Vishay / BC Components | `K104K15X7RF5TL2` | 100 nF, 50 V, X7R, radial | A et B1 |
-| 10 | Réservoir alimentation | Panasonic | `EEU-FR1E101` | 100 µF, 25 V, 105 °C, low ESR | A et B1 |
-| 10 | Diode Schottky alimentation | Vishay | `1N5817-E3/54` | 1 A, traversante | Alimentation conditionnelle |
-| 10 | Diode Schottky signal | Vishay | `BAT41-TR` | 100 V, 100 mA, DO-35 traversant | B1 conditionnel |
-| 10 | Transistor NPN authentique | onsemi | `BC33740BU` | BC337-40, 45 V, 800 mA, TO-92, conditionnement vrac | Référence A et B1 |
-| 10 | LED IR authentique | Vishay | `TSAL6400` | 940 nm, angle ±25°, traversante | Piste A |
+The complete main order below was received from Mouser on 2026-08-14. These parts are
+the known-origin reference stock for the V2 validation. Keep them identifiable as
+Mouser parts; record only `Mouser`, `AliExpress`, or `legacy/unknown stock` in test
+results rather than maintaining a separate inventory system.
+
+| Qté | Fonction | Fabricant | Référence fabricant | Référence Mouser | Caractéristiques | Usage |
+|---:|---|---|---|---|---|---|
+| 10 | Résistance LED IR | Vishay / BC Components | `MRS25000C4709FRP00` | `594-MRS25000C4709FRP` | 47 Ω, 1 %, 0,6 W, traversante | Piste A |
+| 5 | Charge de test 5 V | Vishay / BC Components | `MRS25000C1000FRP00` | `594-MRS25000C1000FRP` | 100 Ω, 1 %, 0,6 W, traversante | Validation |
+| 20 | Résistance de base BC337 | Yageo | `MFR-50SFRF52-470R` | `603-MFR-50SFRF52470R` | 470 Ω, 1 %, 0,5 W, AEC-Q200 | A et B1 |
+| 20 | Résistance LED visible | Yageo | `MFR-25FBF52-330R` | `603-MFR-25FBF52-330R` | 330 Ω, 1 %, 0,25 W | Validation |
+| 20 | Pull-down base-émetteur | Yageo | `MFR-25FBF52-10K` | `603-MFR-25FBF52-10K` | 10 kΩ, 1 %, 0,25 W | A et B1 |
+| 10 | Pull-up éventuel | Yageo | `MFR-25FBF52-4K7` | `603-MFR-25FBF52-4K7` | 4,7 kΩ, 1 %, 0,25 W | B1 conditionnel |
+| 10 | Protection/test signal | Yageo | `MFR-25FBF52-1K` | `603-MFR-25FBF52-1K` | 1 kΩ, 1 %, 0,25 W | B1 conditionnel |
+| 20 | Découplage local | Vishay / BC Components | `K104K15X7RF5TL2` | `594-K104K15X7RF5TL2` | 100 nF, 50 V, X7R, radial | A et B1 |
+| 10 | Réservoir alimentation | Panasonic | `EEU-FR1E101` | `667-EEU-FR1E101` | 100 µF, 25 V, 105 °C, low ESR | A et B1 |
+| 10 | Diode Schottky alimentation | Vishay | `1N5817-E3/54` | `625-1N5817-E3` | 1 A, traversante | Alimentation conditionnelle |
+| 10 | Diode Schottky signal | Vishay | `BAT41-TR` | `78-BAT41` | 100 V, 100 mA, DO-35 traversant | B1 conditionnel |
+| 10 | Transistor NPN authentique | onsemi | `BC33740BU` | `512-BC33740BU` | BC337-40, 45 V, 800 mA, TO-92, conditionnement vrac | Référence A et B1 |
+| 10 | LED IR authentique | Vishay | `TSAL6400` | `782-TSAL6400` | 940 nm, angle ±25°, traversante | Piste A |
 
 ### Pourquoi conserver des composants authentiques de référence
 
-Les BC337-40 et TSAL6400 déjà disponibles peuvent être utilisés. Quelques composants
-provenant d'un distributeur agréé servent cependant d'étalons : en cas d'échec, ils
+Les BC337-40 et TSAL6400 déjà disponibles peuvent être utilisés pour comparaison. Les
+composants Mouser servent cependant d'étalons : en cas d'échec, ils
 permettent d'écarter rapidement un faux marquage, un mauvais brochage ou un composant
 hors spécification.
+
+Les phases 2 à 9 sont réalisées sur breadboard. Les composants de référence ne sont
+soudés sur la carte Piste A durable qu'en phase 10, après validation réelle sur la
+climatisation.
 
 ### Dimensionnement important
 

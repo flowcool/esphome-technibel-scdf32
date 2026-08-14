@@ -30,7 +30,7 @@ reliably controlled the AC unit. Symptoms:
 Root cause was never definitively identified because debugging was done blind (no logic
 analyzer, mixed old/new components, breadboard contact issues).
 
-### What changed (new hardware)
+### Available hardware
 
 All components are now available:
 
@@ -54,6 +54,20 @@ All components are now available:
 | Headers male/female 2.54mm | AliExpress | Assorted | Received |
 | Tact switches 6×6mm | AliExpress | 50 | Received |
 | MB102 breadboard + power module | AliExpress | 2 | Received |
+| Mouser reference components | Mouser | See `docs/bom-v2.md` | Received 2026-08-14 |
+
+The Mouser order provides known-origin reference parts for the validation: Vishay
+TSAL6400 emitters, onsemi BC33740BU transistors, the required resistors, decoupling
+capacitors, reservoir capacitors, and conditional Schottky diodes. Exact manufacturer
+and Mouser references are maintained in `docs/bom-v2.md`.
+
+For every hardware gate, record only the component source needed to reproduce the
+result: `Mouser`, `AliExpress`, or `legacy/unknown stock`. Prefer Mouser reference parts
+for the main validation path. AliExpress or legacy parts remain useful for comparison
+when diagnosing a failure; do not mix their results without recording the source.
+
+Phases 2–9 are breadboard validation. Do not solder the validated Piste A circuit until
+Phase 9 passes; soldering starts in Phase 10.
 
 ### Goals
 
@@ -204,10 +218,11 @@ After validation: remove the test YAML block (output + interval).
 
 **Actions**:
 
-1. Take a fresh BC337-40 from the AliExpress lot
+1. Take a fresh onsemi BC33740BU from the Mouser reference lot
 2. **Expected pinout** (flat face toward you, pins pointing down): E (left) – B (middle) – C (right).
    **However**: the reference printed on the component and the actual manufacturer's datasheet
-   take precedence. AliExpress components may have different pinouts or be rebadged.
+   take precedence. If an AliExpress transistor is tested for comparison, record its
+   source because its pinout or marking may differ.
 3. Multimeter diode mode to identify Base (the pin that shows ~650mV to both others):
 
    | Red probe | Black probe | Expected (NPN) |
