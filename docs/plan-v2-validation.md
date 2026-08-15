@@ -319,7 +319,8 @@ Notes:
      If the remote is visible but the TSAL6400 is not → LED problem.
      If neither is visible → camera filters 940nm, skip to electrical verification.
    - b) Electrical verification (primary proof): measure voltage across the 47Ω resistor
-     during ON state. I = V_across_47Ω / 47. Expect ~3.4V → ~72mA.
+     during ON state. I = V_across_47Ω / 47. With a 5.0–5.2V USB rail and TSAL6400
+     forward voltage around 1.35–1.6V, expect approximately 3.6–3.9V → ~75–83mA.
      This proves the LED is conducting the correct current.
    - **Do NOT use KY-022 at this phase.** The KY-022/VS1838B is a demodulating receiver
      tuned to 38kHz. A 1Hz toggle (DC illumination) is not a 38kHz-modulated signal.
@@ -334,7 +335,7 @@ Use a ½W resistor, or move quickly to Phase 7 (modulated pulses, much lower dut
 | Test | Pass | Fail action |
 |------|------|-------------|
 | Smartphone sees TSAL6400 flash (camera pre-validated with remote) | IR LED emits | Swap LED polarity, try another TSAL |
-| V across 47Ω ≈ 3.2–3.6V during ON | Current ~68–76mA, LED conducting | Wrong resistor value or 5V supply issue |
+| V across 47Ω ≈ 3.6–4.0V during ON | Current ~75–85mA, LED conducting and below the TSAL6400 100mA continuous rating | Wrong resistor value or 5V supply issue |
 
 ---
 
@@ -890,7 +891,7 @@ If the XIAO needs OTA flashing during this phase, flash first via the safe USB s
 | 3 | 5V available | Multimeter 4.8–5.2V | Yes |
 | 4 | BC337 validated | Switching test both orientations | Yes |
 | 5 | Chain GPIO→transistor→visible LED | Red LED blinks via BC337 | Yes |
-| 6 | IR LED emits | V across 47Ω confirms ~72mA, smartphone sees flash | Yes |
+| 6 | IR LED emits | V across 47Ω confirms ~75–85mA and remains below the TSAL6400 continuous rating, smartphone sees flash | Yes |
 | 7 | 38kHz carrier works | KY-022 decodes NEC | Yes |
 | 8 | Technibel frames match remote | Decoded bytes match oracle `D0 AC 28 F8 43 AC` | Yes |
 | 9 | AC responds + frame repeat test | Beep + all 4 modes + OFF | Yes |
