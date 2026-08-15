@@ -69,7 +69,7 @@ Once installed, `climate.clim_sejour` supports:
 | Feature | Values |
 |---|---|
 | HVAC modes | `off`, `cool`, `dry`, `fan_only`, `auto` |
-| Fan modes | `auto`, `low`, `med`, `high` |
+| Fan modes | `auto`, `1`, `2`, `3`, `4`, `5`, `6` |
 | Temperature range | 16°C – 30°C (1°C step) |
 | Current temperature | From your HA temperature sensor |
 
@@ -149,7 +149,7 @@ L'entité `climate.clim_sejour` une fois installée supporte :
 | Fonction | Valeurs |
 |---|---|
 | Modes HVAC | `off`, `cool`, `dry`, `fan_only`, `auto` |
-| Vitesses ventilateur | `auto`, `low`, `med`, `high` |
+| Vitesses ventilateur | `auto`, `1`, `2`, `3`, `4`, `5`, `6` |
 | Plage température | 16°C – 30°C (pas 1°C) |
 | Température courante | Depuis votre capteur HA |
 
