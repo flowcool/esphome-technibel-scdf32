@@ -1,9 +1,10 @@
-# XIAO ESP32-C3 IR transmitter validation firmware.
-# Phase 7 replaces the Phase 2 GPIO toggle with a 38 kHz NEC test transmitter.
+# XIAO ESP32-C3 Technibel IR transmitter validation firmware.
 
 esphome:
   name: ir-technibel-clim-min
   friendly_name: Clim Séjour IR Min
+  includes:
+    - ./libraries/technibel_ir.h
   platformio_options:
     board_build.flash_mode: dio
 
@@ -32,11 +33,39 @@ api:
   encryption:
     key: !secret api_encryption_key
   services:
-    - service: test_nec
+    - service: send_command
+      variables:
+        mode: string      # COOL | DRY | FAN | AUTO | OFF
+        consigne: int     # 16–30
+        fan: string       # AUTO | LOW | MED | HIGH
+        t_amb: int        # 15–40, from the remote/HA room sensor
       then:
-        - remote_transmitter.transmit_nec:
-            address: 0x1234
-            command: 0x5678
+        - lambda: |-
+            bool power = true;
+            TechnibelMode m = TechnibelMode::COOL;
+            if      (mode == "OFF")  { power = false; }
+            else if (mode == "DRY")  { m = TechnibelMode::DRY; }
+            else if (mode == "FAN")  { m = TechnibelMode::FAN; }
+            else if (mode == "AUTO") { m = TechnibelMode::AUTO; }
+
+            TechnibelFan f = TechnibelFan::FAN_AUTO;
+            if      (fan == "LOW")  { f = TechnibelFan::FAN_LOW; }
+            else if (fan == "MED")  { f = TechnibelFan::FAN_MED; }
+            else if (fan == "HIGH") { f = TechnibelFan::FAN_HIGH; }
+
+            uint8_t temp = (uint8_t)std::max((int32_t)16, std::min((int32_t)30, (int32_t)consigne));
+            uint8_t amb  = (uint8_t)std::max((int32_t)15, std::min((int32_t)40, (int32_t)t_amb));
+            auto raw = technibel_build_raw(m, temp, f, power, amb);
+            auto call = id(ir_tx).transmit();
+            auto* data = call.get_data();
+            data->set_carrier_frequency(38000);
+            for (auto value : raw) {
+              if (value > 0) data->mark(value);
+              else data->space(-value);
+            }
+            call.perform();
+            ESP_LOGI("technibel", "IR sent: mode=%s temp=%d fan=%s amb=%d power=%s",
+              mode.c_str(), (int)temp, fan.c_str(), (int)amb, power ? "ON" : "OFF");
 
 time:
   - platform: sntp
