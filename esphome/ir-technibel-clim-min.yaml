@@ -1,6 +1,5 @@
-# Bare XIAO ESP32-C3 validation firmware.
-# Phase 2 adds a visible LED on GPIO3 (D1); remove the output/interval blocks
-# after Gatekeeper 2 before moving to the transistor/IR phases.
+# XIAO ESP32-C3 IR transmitter validation firmware.
+# Phase 7 replaces the Phase 2 GPIO toggle with a 38 kHz NEC test transmitter.
 
 esphome:
   name: ir-technibel-clim-min
@@ -32,6 +31,12 @@ wifi:
 api:
   encryption:
     key: !secret api_encryption_key
+  services:
+    - service: test_nec
+      then:
+        - remote_transmitter.transmit_nec:
+            address: 0x1234
+            command: 0x5678
 
 time:
   - platform: sntp
@@ -42,14 +47,9 @@ time:
       - 216.239.35.0
       - pool.ntp.org
 
-# Phase 2: GPIO3/D1 -> 330 ohm -> LED anode; LED cathode -> GND.
-switch:
-  - platform: gpio
-    pin: GPIO3
-    id: test_gpio
-    restore_mode: ALWAYS_OFF
-
-interval:
-  - interval: 500ms
-    then:
-      - switch.toggle: test_gpio
+remote_transmitter:
+  id: ir_tx
+  pin: GPIO3
+  carrier_duty_percent: 50%
+  non_blocking: false
+  rmt_symbols: 96
