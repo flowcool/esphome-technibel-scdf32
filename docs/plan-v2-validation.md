@@ -118,7 +118,7 @@ on a failed gate.
 
 **Actions**:
 
-1. Create `esphome/ir-technibel-clim-c3.yaml` — minimal config (WiFi + logger + API + OTA, NO IR yet)
+1. Create or select `esphome/ir-technibel-clim-min.yaml` — minimal config (WiFi + logger + API + OTA, NO IR yet)
 2. Required boilerplate for C3:
    ```yaml
    esp32:
@@ -128,8 +128,8 @@ on a failed gate.
        type: arduino
 
    esphome:
-     name: ir-technibel-clim
-     friendly_name: Clim Séjour IR
+     name: ir-technibel-clim-min
+     friendly_name: Clim Séjour IR Min
      platformio_options:
        board_build.flash_mode: dio
 
@@ -141,8 +141,11 @@ on a failed gate.
      - platform: esphome
        password: !secret ota_password
    ```
-3. Flash via USB-C (first time only — OTA available after this)
-4. Check ESPHome logs: boot OK, WiFi connected, API accessible
+3. Validate the YAML before touching the device: `esphome config esphome/ir-technibel-clim-min.yaml`.
+4. Flash via USB-C from the ESPHome dashboard (`Install` → `Plug into this computer`) or with
+   `esphome run esphome/ir-technibel-clim-min.yaml`; USB is required for the first flash.
+5. Check ESPHome logs: boot OK, WiFi connected, API accessible. Subsequent firmware updates
+   may use OTA after the device has completed its first successful boot.
 
 **Minimum ESPHome version**: 2024.6+ recommended for RMT v2 support on C3.
 
@@ -162,23 +165,32 @@ on a failed gate.
 
 **Actions**:
 
-1. Solder female headers onto the XIAO C3 (so it can be removed from any PCB later)
+1. Solder two 1×7 **male pin headers** onto the XIAO C3, with the long pins pointing down,
+   so the board can plug into and later be removed from a breadboard. Female Dupont wires
+   alone do not make the XIAO pluggable into a breadboard.
 2. Wire a **red visible LED** + **330Ω** between GPIO3 and GND (direct, no transistor)
    - I = (3.3V − 2.0V) / 330Ω ≈ 4mA — safe for any standard LED
    - Do NOT use 47Ω here — that resistor is sized for the TSAL6400 on a 5V rail
-3. Add to YAML:
+3. Patch `esphome/ir-technibel-clim-min.yaml` with this test block (a GPIO `switch` is used
+   because `output.toggle` is not a valid ESPHome action):
    ```yaml
-   output:
+   switch:
      - platform: gpio
        pin: GPIO3
        id: test_gpio
+       restore_mode: ALWAYS_OFF
 
    interval:
      - interval: 500ms
        then:
-         - output.toggle: test_gpio
+         - switch.toggle: test_gpio
    ```
-4. Flash and observe: red LED must blink at ~1Hz
+4. Validate the patched YAML, then flash it (USB if this is the first firmware containing
+   this device identity; otherwise OTA is acceptable):
+   `esphome config esphome/ir-technibel-clim-min.yaml`
+   `esphome run esphome/ir-technibel-clim-min.yaml`
+5. Observe the red LED: it must blink at ~1Hz. Measure GPIO3 against GND; it must alternate
+   between approximately 0V and 3.3V. Do not measure resistance or continuity on a powered board.
 
 **Gatekeeper 2**:
 
@@ -187,7 +199,8 @@ on a failed gate.
 | Red LED blinks at ~1Hz | GPIO3 works | Try GPIO4 (D2), check solder joints |
 | Multimeter GPIO3: alternates 0V ↔ 3.3V | Confirmed | Wrong pin number or dead pin |
 
-After validation: remove the test YAML block (output + interval).
+After validation: record the measured values and component provenance, then remove the test
+YAML block (`switch` + `interval`) before proceeding to Phase 4.
 
 ---
 
