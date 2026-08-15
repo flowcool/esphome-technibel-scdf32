@@ -376,8 +376,13 @@ If NEC works, the hardware is validated. The Technibel protocol itself is valida
 
 **Logic analyzer verification** (parallel, safe on bench — no mains voltage involved):
 
-- Connect channel 0 to GPIO3 (XIAO C3)
+- The available analyzer is an 8-channel, 24 MHz USB analyzer labelled `CH1`–`CH8`
+  (there is no `CH0`). Connect its `CH1` lead to GPIO3 (XIAO C3).
+- Connect the analyzer `GND` lead to XIAO GND. Power the analyzer from its USB cable;
+  leave its `PWR` lead disconnected because the XIAO is powered independently.
 - Trigger test_nec
+- In PulseView, select the 24 MHz analyzer and verify 38 kHz carrier modulation and
+  correct NEC timing.
 - In PulseView: verify 38kHz carrier modulation, correct NEC timing
 
 **Gatekeeper 7**:
