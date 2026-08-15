@@ -54,14 +54,15 @@ Pour la phase de capture uniquement : récepteur IR KY-022 / VS1838B 38kHz.
 
 ## Protocole — résumé
 
-Trame 6 octets : `D0 B1 B2 B3 43 B5`
+Trame 6 octets : `D0 B1 B2 B3 03 B5`
 
 - **B1** : mode (COOL=`0xAC`, DRY=`0xAA`, FAN=`0xA9`, AUTO=`0xAD`)
 - **B2** : température encodée (nibble hi) + vitesse ventilo (nibble lo)
-- **B3** : `0xF8` allumé / `0x08` éteint
+- **B3** : `0x18` allumé / `0x08` éteint
+- **B4** : `0x03` fixe
 - **B5** : checksum incluant la température ambiante
 
-Trame OFF fixe : `D0 AC 28 08 43 64`
+Trame OFF exemple : `D0 AC A8 08 03 A4` (consigne 25°C, ambiance 25°C)
 
 → Documentation complète : [`docs/protocol.md`](docs/protocol.md)
 

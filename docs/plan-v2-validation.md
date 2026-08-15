@@ -440,13 +440,14 @@ replacement for the discrete circuit — treat it as a separate experiment, not 
 B0 = 0xD0  (fixed device address)
 B1 = 0xAC  (COOL mode)
 B2 = 0x28  (temp_hi=0x2 for 24°C, fan_lo=0x8 for AUTO)
-B3 = 0xF8  (power ON)
-B4 = 0x43  (fixed)
-B5 = 0xAC  (checksum: reverse(reverse(0x28) + reverse(0xF8) + 25 - 23)
-           = reverse(0x14 + 0x1F + 2) = reverse(0x35) = 0xAC)
+B3 = 0x18  (power ON)
+B4 = 0x03  (fixed)
+B5 = 0x34  (checksum for the captured 24°C frame and t_amb=25:
+           reverse(reverse(0x28) + reverse(0x18) + 25 - 25)
+           = reverse(0x14 + 0x18) = reverse(0x2C) = 0x34)
 ```
 
-**Oracle test frame: `D0 AC 28 F8 43 AC`**
+**Validated reference frame: `D0 AC 28 18 03 34`**
 
 **Comparing with the original remote** — the `t_amb` problem:
 
@@ -455,7 +456,7 @@ A B5 difference must NEVER be accepted without explanation. Procedure:
 
 1. From the remote's captured B5, reverse-compute t_amb:
    ```
-   t_amb = (reverse(B5_captured) - reverse(B2) - reverse(B3) + 23) & 0xFF
+   t_amb = (reverse(B5_captured) - reverse(B2) - reverse(B3) + 25) & 0xFF
    ```
 2. Verify the result is an integer and physically plausible (15–40°C)
 3. Re-generate B5 from this t_amb value — it must match the captured B5 exactly
@@ -471,7 +472,7 @@ error — do not attribute it to "temperature difference".
 | B0–B4 identical between ESP32 and remote | Protocol encoding correct | Debug encoding (should not happen — code is frozen) |
 | B5 from remote reverse-computed to plausible t_amb (15–40°C) | Checksum formula correct | Formula error — re-verify against protocol.md |
 | ESP32 B5 matches remote B5 when using same reverse-computed t_amb | End-to-end checksum validated | Bit error — compare raw captures bit by bit |
-| ESP32 frame matches oracle `D0 AC 28 F8 43 AC` (with t_amb=25) | Independent verification | Check t_amb value used |
+| ESP32 frame matches reference `D0 AC 28 18 03 34` (with t_amb=25) | Independent verification | Check t_amb value used |
 | Timings within ±10% of remote | Acceptable by AC | Timing constants may be adjusted (see note below) |
 
 **Note on `technibel_ir.h` freeze scope**: the frame builder (encoding, checksum) is frozen.
@@ -513,7 +514,7 @@ permitted modification.
 |------|------|-------------|
 | AC beeps on first command | **Signal received** | Move closer (5cm), add 2nd LED, check angle |
 | All 4 modes + OFF work | **PISTE A VALIDATED** | Debug failing mode individually |
-| ON/OFF works | Power control OK | Check B3 encoding (0xF8/0x08) |
+| ON/OFF works | Power control OK | Check B3 encoding (0x18/0x08) |
 | Temperature change works | Temp encoding OK | Check B2 hi nibble encoding |
 | Repeat 10× without failure | Reliable | Check timing drift, power stability, frame repeats |
 
@@ -903,7 +904,7 @@ If the XIAO needs OTA flashing during this phase, flash first via the safe USB s
 | 5 | Chain GPIO→transistor→visible LED | Red LED blinks via BC337 | Yes |
 | 6 | IR LED emits | V across 47Ω confirms ~75–85mA and remains below the TSAL6400 continuous rating, smartphone sees flash | Yes |
 | 7 | 38kHz carrier works | KY-022 decodes NEC | Yes |
-| 8 | Technibel frames match remote | Decoded bytes match oracle `D0 AC 28 F8 43 AC` | Yes |
+| 8 | Technibel frames match remote | Decoded bytes match reference `D0 AC 28 18 03 34` | Yes |
 | 9 | AC responds + frame repeat test | Beep + all 4 modes + OFF | Yes |
 | 10 | Piste A soldered as reference | Same tests pass on PCB | Recommended |
 | 11 | AC unit visual inspection | TSOP identified, photographed | Yes |

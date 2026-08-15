@@ -13,9 +13,9 @@
  *   B2 = (temp_nibble_hi << 4) | fan_nibble_lo
  *          temp_hi = (reverseBits8(consigne-4) >> 4) & 0xF
  *          fan_lo  : AUTO=0x8, FAN_LOW=0xC, FAN_MED=0xE, FAN_HIGH=0xB
- *   B3 = 0xF8 (ON) | 0x08 (OFF)
- *   B4 = 0x43  (fixe)
- *   B5 = reverseBits8( lsb(B2) + lsb(B3) + T_amb - 23 )
+ *   B3 = 0x18 (ON) | 0x08 (OFF)
+ *   B4 = 0x03  (fixe)
+ *   B5 = reverseBits8( lsb(B2) + lsb(B3) + T_amb - 25 )
  */
 
 #pragma once
@@ -65,10 +65,10 @@ static std::vector<uint8_t> technibel_build_frame(
   uint8_t tempHi = (technibel_reverse_bits(consigne - 4) >> 4) & 0x0F;
   uint8_t fanLo  = static_cast<uint8_t>(fan);
   uint8_t B2 = (tempHi << 4) | fanLo;
-  uint8_t B3 = power ? 0xF8 : 0x08;
-  uint8_t B4 = 0x43;
+  uint8_t B3 = power ? 0x18 : 0x08;
+  uint8_t B4 = 0x03;
   uint8_t B5 = technibel_reverse_bits(
-    (uint8_t)((technibel_reverse_bits(B2) + technibel_reverse_bits(B3) + t_amb - 23) & 0xFF)
+    (uint8_t)((technibel_reverse_bits(B2) + technibel_reverse_bits(B3) + t_amb - 25) & 0xFF)
   );
   return {B0, B1, B2, B3, B4, B5};
 }

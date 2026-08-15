@@ -34,8 +34,8 @@ replayable — no rolling code.
 | B0 | `0xD0` | Device address — always fixed |
 | B1 | `0xAC` | Operating mode |
 | B2 | `0x28` | Temperature (hi nibble) + fan speed (lo nibble) |
-| B3 | `0xF8` | Power on/off flag |
-| B4 | `0x43` | Fixed — always `0x43` |
+| B3 | `0x18` | Power ON flag (`0x08` = OFF) |
+| B4 | `0x03` | Fixed — always `0x03` |
 | B5 | checksum | Computed from B2, B3, ambient temperature |
 
 ### Mode encoding (B1)
@@ -94,17 +94,17 @@ Example: COOL, 24°C, AUTO fan → `B2 = (0x2 << 4) | 0x8 = 0x28`
 
 | Value | Meaning |
 |---|---|
-| `0xF8` | Power ON (or command update while running) |
+| `0x18` | Power ON (or command update while running) |
 | `0x08` | Power OFF |
 
-> Always use `0xF8` when sending a command from Home Assistant, even just to change
+> Always use `0x18` when sending a command from Home Assistant, even just to change
 > the setpoint — the AC needs this flag to apply the new value.
 
 ### Checksum (B5)
 
 ```
 B5 = reverseBits8(
-       (reverseBits8(B2) + reverseBits8(B3) + T_ambient - 23) & 0xFF
+       (reverseBits8(B2) + reverseBits8(B3) + T_ambient - 25) & 0xFF
      )
 ```
 
@@ -115,7 +115,7 @@ works reliably for setpoints in the 18–26°C range.
 ### OFF frame (fixed)
 
 ```
-D0 AC 28 08 43 64
+D0 AC A8 08 03 A4
 ```
 
 This frame was pre-computed with B3=`0x08` (power off) and ambient=25°C.
@@ -161,8 +161,8 @@ statiques et rejouables — pas de code tournant.
 | B0 | `0xD0` | Adresse device — toujours fixe |
 | B1 | `0xAC` | Mode de fonctionnement |
 | B2 | `0x28` | Température (nibble hi) + vitesse ventilo (nibble lo) |
-| B3 | `0xF8` | Flag allumage/extinction |
-| B4 | `0x43` | Fixe — toujours `0x43` |
+| B3 | `0x18` | Flag marche (`0x08` = arrêt) |
+| B4 | `0x03` | Fixe — toujours `0x03` |
 | B5 | checksum | Calculé depuis B2, B3, température ambiante |
 
 ### Encodage des modes (B1)
@@ -201,17 +201,17 @@ B2 = (nibble_hi_temp << 4) | nibble_lo_ventilo
 
 | Valeur | Signification |
 |---|---|
-| `0xF8` | Allumage (ou mise à jour de consigne) |
+| `0x18` | Allumage (ou mise à jour de consigne) |
 | `0x08` | Extinction |
 
-> Toujours utiliser `0xF8` depuis Home Assistant, même pour changer uniquement
+> Toujours utiliser `0x18` depuis Home Assistant, même pour changer uniquement
 > la consigne — le climatiseur nécessite ce flag pour appliquer la nouvelle valeur.
 
 ### Checksum (B5)
 
 ```
 B5 = inverseBits8(
-       (inverseBits8(B2) + inverseBits8(B3) + T_ambiant - 23) & 0xFF
+       (inverseBits8(B2) + inverseBits8(B3) + T_ambiant - 25) & 0xFF
      )
 ```
 
@@ -222,7 +222,7 @@ Une valeur fixe de `25` fonctionne de manière fiable pour les consignes entre 1
 ### Trame OFF (fixe)
 
 ```
-D0 AC 28 08 43 64
+D0 AC A8 08 03 A4
 ```
 
 Pré-calculée avec B3=`0x08` (extinction) et ambiant=25°C. Éteint le climatiseur

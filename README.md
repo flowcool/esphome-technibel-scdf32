@@ -160,8 +160,8 @@ Trame : `B0 B1 B2 B3 B4 B5` (6 octets). Le checksum intègre la température amb
 | B0 | `0xD0` | Device address (fixed / fixe) |
 | B1 | mode | COOL=`0xAC`, DRY=`0xAA`, FAN=`0xA9`, AUTO=`0xAD` |
 | B2 | temp+fan | hi nibble = temp encoded, lo nibble = fan speed |
-| B3 | `0xF8`/`0x08` | Power ON / OFF |
-| B4 | `0x43` | Fixed / Fixe |
+| B3 | `0x18`/`0x08` | Power ON / OFF |
+| B4 | `0x03` | Fixed / Fixe |
 | B5 | checksum | Includes ambient temperature / Intègre T° ambiante |
 
 → [`docs/protocol.md`](docs/protocol.md) for full encoding tables and checksum formula.
