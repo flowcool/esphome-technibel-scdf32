@@ -80,7 +80,10 @@ automation:
         entity_id: sensor.thermometre_espace_de_vie_temperature
       - trigger: homeassistant
         event: start
-    conditions: []
+    conditions:
+      - condition: template
+        value_template: >
+          {{ is_number(states('sensor.thermometre_espace_de_vie_temperature')) }}
     actions:
       - action: mqtt.publish
         data:
