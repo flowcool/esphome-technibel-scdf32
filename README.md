@@ -158,7 +158,7 @@ Trame : `B0 B1 B2 B3 B4 B5` (6 octets). Le checksum intègre la température amb
 | Byte | Value | Description |
 |---|---|---|
 | B0 | `0xD0` | Device address (fixed / fixe) |
-| B1 | mode | COOL=`0xAC`, DRY=`0xAA`, FAN=`0xA9`, AUTO=`0xAD` |
+| B1 | ambient+mode | High nibble = ambient temperature, low nibble: COOL=`0xC`, DRY=`0xA`, FAN=`0x9`, AUTO=`0xD` |
 | B2 | temp+fan | hi nibble = temp encoded, lo nibble = fan speed |
 | B3 | `0x18`/`0x08` | Power ON / OFF |
 | B4 | `0x03` | Fixed / Fixe |

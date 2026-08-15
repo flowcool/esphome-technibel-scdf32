@@ -438,7 +438,7 @@ replacement for the discrete circuit — treat it as a separate experiment, not 
 
 ```
 B0 = 0xD0  (fixed device address)
-B1 = 0xAC  (COOL mode)
+B1 = 0xAC  (ambient 25°C high nibble + COOL mode nibble)
 B2 = 0x28  (temp_hi=0x2 for 24°C, fan_lo=0x8 for AUTO)
 B3 = 0x18  (power ON)
 B4 = 0x03  (fixed)

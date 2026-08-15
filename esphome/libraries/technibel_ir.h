@@ -9,7 +9,9 @@
  *
  * Structure :
  *   B0 = 0xD0  (device address, fixe)
- *   B1 = mode  (COOL=0xAC, DRY=0xAA, FAN=0xA9, AUTO=0xAD)
+ *   B1 = (ambient_temp_hi << 4) | mode_nibble
+ *          ambient_temp_hi = (reverseBits8(T_amb-4) >> 4) & 0xF
+ *          mode_nibble : COOL=0xC, DRY=0xA, FAN=0x9, AUTO=0xD
  *   B2 = (temp_nibble_hi << 4) | fan_nibble_lo
  *          temp_hi = (reverseBits8(consigne-4) >> 4) & 0xF
  *          fan_lo  : AUTO=0x8, FAN_LOW=0xC, FAN_MED=0xE, FAN_HIGH=0xB
@@ -32,10 +34,10 @@ static const uint16_t TECHNIBEL_BIT_ZER_SPACE =  900;
 // ── Enums — préfixés pour éviter les conflits avec les macros Arduino ─────────
 // (LOW=0x0 et HIGH=0x1 sont définis dans esp32-hal-gpio.h)
 enum class TechnibelMode : uint8_t {
-  COOL = 0xAC,
-  DRY  = 0xAA,
-  FAN  = 0xA9,
-  AUTO = 0xAD,
+  COOL = 0xC,
+  DRY  = 0xA,
+  FAN  = 0x9,
+  AUTO = 0xD,
 };
 
 enum class TechnibelFan : uint8_t {
@@ -61,7 +63,8 @@ static std::vector<uint8_t> technibel_build_frame(
     uint8_t t_amb
 ) {
   uint8_t B0 = 0xD0;
-  uint8_t B1 = static_cast<uint8_t>(mode);
+  uint8_t ambHi = (technibel_reverse_bits(t_amb - 4) >> 4) & 0x0F;
+  uint8_t B1 = (uint8_t)((ambHi << 4) | static_cast<uint8_t>(mode));
   uint8_t tempHi = (technibel_reverse_bits(consigne - 4) >> 4) & 0x0F;
   uint8_t fanLo  = static_cast<uint8_t>(fan);
   uint8_t B2 = (tempHi << 4) | fanLo;

@@ -56,7 +56,7 @@ Pour la phase de capture uniquement : récepteur IR KY-022 / VS1838B 38kHz.
 
 Trame 6 octets : `D0 B1 B2 B3 03 B5`
 
-- **B1** : mode (COOL=`0xAC`, DRY=`0xAA`, FAN=`0xA9`, AUTO=`0xAD`)
+- **B1** : température ambiante encodée (nibble haut) + mode (nibble bas : COOL=`0xC`, DRY=`0xA`, FAN=`0x9`, AUTO=`0xD`)
 - **B2** : température encodée (nibble hi) + vitesse ventilo (nibble lo)
 - **B3** : `0x18` allumé / `0x08` éteint
 - **B4** : `0x03` fixe

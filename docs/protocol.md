@@ -32,20 +32,25 @@ replayable — no rolling code.
 | Byte | Example | Description |
 |---|---|---|
 | B0 | `0xD0` | Device address — always fixed |
-| B1 | `0xAC` | Operating mode |
+| B1 | `0xAC` | Ambient temperature high nibble + operating mode nibble |
 | B2 | `0x28` | Temperature (hi nibble) + fan speed (lo nibble) |
 | B3 | `0x18` | Power ON flag (`0x08` = OFF) |
 | B4 | `0x03` | Fixed — always `0x03` |
 | B5 | checksum | Computed from B2, B3, ambient temperature |
 
-### Mode encoding (B1)
+### Mode encoding (B1 low nibble)
 
-| Mode | B1 value |
+| Mode | Low nibble |
 |---|---|
-| COOL | `0xAC` |
-| DRY | `0xAA` |
-| FAN only | `0xA9` |
-| AUTO | `0xAD` |
+| COOL | `0xC` |
+| DRY | `0xA` |
+| FAN only | `0x9` |
+| AUTO | `0xD` |
+
+The high nibble of B1 carries the ambient temperature using the same encoding
+as B2: `(reverseBits8(T_ambient - 4) >> 4) & 0xF`. For example, ambient 25°C
+with COOL gives `B1=0xAC`, ambient 26°C gives `B1=0x6C`, and ambient 27°C
+gives `B1=0xEC`.
 
 > OFF is not a mode value — it is encoded in B3 (see Power flag below).
 
@@ -159,20 +164,24 @@ statiques et rejouables — pas de code tournant.
 | Octet | Exemple | Description |
 |---|---|---|
 | B0 | `0xD0` | Adresse device — toujours fixe |
-| B1 | `0xAC` | Mode de fonctionnement |
+| B1 | `0xAC` | Nibble haut température ambiante + nibble bas mode |
 | B2 | `0x28` | Température (nibble hi) + vitesse ventilo (nibble lo) |
 | B3 | `0x18` | Flag marche (`0x08` = arrêt) |
 | B4 | `0x03` | Fixe — toujours `0x03` |
 | B5 | checksum | Calculé depuis B2, B3, température ambiante |
 
-### Encodage des modes (B1)
+### Encodage des modes (nibble bas de B1)
 
-| Mode | Valeur B1 |
+| Mode | Nibble bas |
 |---|---|
-| COOL | `0xAC` |
-| DRY (déshumidification) | `0xAA` |
-| FAN only (ventilation) | `0xA9` |
-| AUTO | `0xAD` |
+| COOL | `0xC` |
+| DRY (déshumidification) | `0xA` |
+| FAN only (ventilation) | `0x9` |
+| AUTO | `0xD` |
+
+Le nibble haut de B1 encode la température ambiante avec la même formule que
+B2 : `(inverseBits8(T_ambiant - 4) >> 4) & 0xF`. Ainsi, à 25°C en COOL,
+`B1=0xAC`, à 26°C `B1=0x6C`, et à 27°C `B1=0xEC`.
 
 > OFF n'est pas une valeur de mode — il est encodé dans B3 (voir Flag d'alimentation).
 
