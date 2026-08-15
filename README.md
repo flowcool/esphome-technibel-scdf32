@@ -76,6 +76,15 @@ Once installed, `climate.clim_sejour` supports:
 Every state change (mode, temperature, fan speed) automatically sends the full IR
 command to the AC via the ESP32.
 
+### Protocol regression check
+
+Run the dependency-free protocol verifier after changing captures, documentation,
+or frame-generation code. It does not compile ESPHome or contact live devices:
+
+```bash
+python3 tests/verify_protocol.py
+```
+
 ### Protocol overview
 
 The Technibel SCDF32C5I uses a proprietary 48-bit IR protocol at 38kHz.
@@ -143,6 +152,16 @@ L'entité `climate.clim_sejour` une fois installée supporte :
 | Vitesses ventilateur | `auto`, `low`, `med`, `high` |
 | Plage température | 16°C – 30°C (pas 1°C) |
 | Température courante | Depuis votre capteur HA |
+
+### Vérification de non-régression du protocole
+
+Après toute modification des captures, de la documentation ou du générateur de
+trames, lancer le vérificateur sans dépendance. Il ne compile pas ESPHome et ne
+contacte aucun appareil :
+
+```bash
+python3 tests/verify_protocol.py
+```
 
 ### Aperçu du protocole
 
