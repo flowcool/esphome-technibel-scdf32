@@ -37,7 +37,7 @@ api:
       variables:
         mode: string      # COOL | DRY | FAN | AUTO | OFF
         consigne: int     # 16–30
-        fan: string       # AUTO | LOW | MED | HIGH
+        fan: string       # AUTO | 1 | 2 | 3 | 4 | 5 | 6
         t_amb: int        # 15–40, from the remote/HA room sensor
       then:
         - lambda: |-
@@ -49,9 +49,12 @@ api:
             else if (mode == "AUTO") { m = TechnibelMode::AUTO; }
 
             TechnibelFan f = TechnibelFan::FAN_AUTO;
-            if      (fan == "LOW")  { f = TechnibelFan::FAN_LOW; }
-            else if (fan == "MED")  { f = TechnibelFan::FAN_MED; }
-            else if (fan == "HIGH") { f = TechnibelFan::FAN_HIGH; }
+            if      (fan == "1" || fan == "LOW")  { f = TechnibelFan::FAN_1; }
+            else if (fan == "2")                  { f = TechnibelFan::FAN_2; }
+            else if (fan == "3" || fan == "MED")  { f = TechnibelFan::FAN_3; }
+            else if (fan == "4")                  { f = TechnibelFan::FAN_4; }
+            else if (fan == "5")                  { f = TechnibelFan::FAN_5; }
+            else if (fan == "6" || fan == "HIGH") { f = TechnibelFan::FAN_6; }
 
             uint8_t temp = (uint8_t)std::max((int32_t)16, std::min((int32_t)30, (int32_t)consigne));
             uint8_t amb  = (uint8_t)std::max((int32_t)15, std::min((int32_t)40, (int32_t)t_amb));

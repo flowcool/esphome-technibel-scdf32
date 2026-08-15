@@ -14,10 +14,12 @@
  *          mode_nibble : COOL=0xC, DRY=0xA, FAN=0x9, AUTO=0xD
  *   B2 = (temp_nibble_hi << 4) | fan_nibble_lo
  *          temp_hi = (reverseBits8(consigne-4) >> 4) & 0xF
- *          fan_lo  : AUTO=0x8, FAN_LOW=0xC, FAN_MED=0xE, FAN_HIGH=0xB
+ *          fan_lo  : AUTO=0x8, FAN1=0xC, FAN2=0xA, FAN3=0xE,
+ *                    FAN4=0x9, FAN5=0xD, FAN6=0xB
  *   B3 = 0x18 (ON) | 0x08 (OFF)
  *   B4 = 0x03  (fixe)
- *   B5 = reverseBits8( lsb(B2) + lsb(B3) + T_amb - 25 )
+ *   B5 = reverseBits8(reverseBits8(B1) + reverseBits8(B2)
+ *                     + reverseBits8(B3) + 0xCB)
  */
 
 #pragma once
@@ -42,9 +44,15 @@ enum class TechnibelMode : uint8_t {
 
 enum class TechnibelFan : uint8_t {
   FAN_AUTO = 0x8,
-  FAN_LOW  = 0xC,
-  FAN_MED  = 0xE,
-  FAN_HIGH = 0xB,
+  FAN_1    = 0xC,
+  FAN_2    = 0xA,
+  FAN_3    = 0xE,
+  FAN_4    = 0x9,
+  FAN_5    = 0xD,
+  FAN_6    = 0xB,
+  FAN_LOW  = FAN_1,
+  FAN_MED  = FAN_3,
+  FAN_HIGH = FAN_6,
 };
 
 // ── Inversion des bits d'un byte ──────────────────────────────────────────────
@@ -62,16 +70,21 @@ static std::vector<uint8_t> technibel_build_frame(
     bool power,
     uint8_t t_amb
 ) {
+  // OFF is a fixed frame on the original remote. Reusing the current setpoint
+  // or fan level can be acknowledged by the AC without actually stopping it.
+  if (!power) return {0xD0, 0xAC, 0xA8, 0x08, 0x03, 0xA4};
+
   uint8_t B0 = 0xD0;
   uint8_t ambHi = (technibel_reverse_bits(t_amb - 4) >> 4) & 0x0F;
   uint8_t B1 = (uint8_t)((ambHi << 4) | static_cast<uint8_t>(mode));
   uint8_t tempHi = (technibel_reverse_bits(consigne - 4) >> 4) & 0x0F;
   uint8_t fanLo  = static_cast<uint8_t>(fan);
   uint8_t B2 = (tempHi << 4) | fanLo;
-  uint8_t B3 = power ? 0x18 : 0x08;
+  uint8_t B3 = 0x18;
   uint8_t B4 = 0x03;
   uint8_t B5 = technibel_reverse_bits(
-    (uint8_t)((technibel_reverse_bits(B2) + technibel_reverse_bits(B3) + t_amb - 25) & 0xFF)
+    (uint8_t)((technibel_reverse_bits(B1) + technibel_reverse_bits(B2)
+      + technibel_reverse_bits(B3) + 0xCB) & 0xFF)
   );
   return {B0, B1, B2, B3, B4, B5};
 }

@@ -3,10 +3,9 @@
 # Home Assistant — entité climate MQTT pour Technibel SCDF32C5I
 #
 # Requires / Prérequis :
-#   - ESPHome device "ir-technibel-clim" intégré dans HA (API ESPHome native)
+#   - ESPHome device "ir-technibel-clim-min" integrated in HA (native ESPHome API)
 #   - MQTT broker (ex: Mosquitto) configuré dans HA
-#   - Remplacer sensor.YOUR_TEMPERATURE_SENSOR par votre capteur HA
-#     Replace sensor.YOUR_TEMPERATURE_SENSOR with your own HA temperature sensor
+#   - Living-space thermometer exposed as sensor.thermometre_espace_de_vie_temperature
 #
 # Place this file in your HA packages/ directory and restart Home Assistant.
 # Placer ce fichier dans le dossier packages/ de HA et redémarrer Home Assistant.
@@ -29,9 +28,12 @@ mqtt:
         - auto
       fan_modes:
         - auto
-        - low
-        - med
-        - high
+        - "1"
+        - "2"
+        - "3"
+        - "4"
+        - "5"
+        - "6"
       min_temp: 16
       max_temp: 30
       temp_step: 1
@@ -54,16 +56,20 @@ automation:
       - condition: template
         value_template: >
           {{ trigger.from_state is not none
-             and trigger.from_state.state not in ['unknown', 'unavailable'] }}
+             and trigger.to_state is not none
+             and trigger.from_state.state not in ['unknown', 'unavailable']
+             and (trigger.from_state.state != trigger.to_state.state
+                  or trigger.from_state.attributes.temperature != trigger.to_state.attributes.temperature
+                  or trigger.from_state.attributes.fan_mode != trigger.to_state.attributes.fan_mode) }}
     actions:
-      - action: esphome.ir_technibel_clim_send_command
+      - action: esphome.ir_technibel_clim_min_send_command
         data:
           mode: >
             {{ {'off':'OFF','cool':'COOL','dry':'DRY','fan_only':'FAN','auto':'AUTO'}.get(states('climate.clim_sejour'), 'OFF') }}
           consigne: "{{ state_attr('climate.clim_sejour', 'temperature') | int(22) }}"
           fan: "{{ (state_attr('climate.clim_sejour', 'fan_mode') or 'auto') | upper }}"
           t_amb: >
-            {{ states('sensor.YOUR_TEMPERATURE_SENSOR') | float(25) | round(0) | int }}
+            {{ states('sensor.thermometre_espace_de_vie_temperature') | float(25) | round(0) | int }}
     mode: restart
 
   - id: clim_sejour_publier_temperature
@@ -71,7 +77,7 @@ automation:
     description: "Alimente le topic MQTT current_temperature pour affichage dans la carte climate"
     triggers:
       - trigger: state
-        entity_id: sensor.YOUR_TEMPERATURE_SENSOR
+        entity_id: sensor.thermometre_espace_de_vie_temperature
       - trigger: homeassistant
         event: start
     conditions: []
@@ -79,6 +85,6 @@ automation:
       - action: mqtt.publish
         data:
           topic: "clim/sejour/current_temperature"
-          payload: "{{ states('sensor.YOUR_TEMPERATURE_SENSOR') }}"
+          payload: "{{ states('sensor.thermometre_espace_de_vie_temperature') }}"
           retain: true
     mode: queued

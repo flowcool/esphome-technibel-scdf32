@@ -31,7 +31,7 @@ IR control for the Technibel SCDF32C5I air conditioner through ESPHome and Home 
 ## Validation and deployment
 
 1. Validate ESPHome configuration before claiming a firmware change is ready.
-2. Never perform a standalone local ESPHome compilation. Use the live ESPHome instance, which delegates builds to its remote compiler.
+2. Never perform a standalone ESPHome compilation in the local repository. Use the builder provided by the live ESPHome instance.
 3. Identify the dedicated VM, live paths, access method, and rollback path before deployment.
 4. Transfer approved repository files to the VM explicitly through the verified deployment mechanism; report repository state and live state separately.
 5. Compile and flash through the live ESPHome environment only after validation succeeds.
