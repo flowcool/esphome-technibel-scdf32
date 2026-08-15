@@ -234,10 +234,12 @@ YAML block (`switch` + `interval`) before proceeding to Phase 4.
 **Actions**:
 
 1. Take a fresh onsemi BC33740BU from the Mouser reference lot
-2. **Expected pinout** (flat face toward you, pins pointing down): E (left) – B (middle) – C (right).
-   **However**: the reference printed on the component and the actual manufacturer's datasheet
-   take precedence. If an AliExpress transistor is tested for comparison, record its
-   source because its pinout or marking may differ.
+2. **Verified pinout for the onsemi `BC33740BU` reference part** (flat face toward you,
+   pins pointing down): C (left, pin 1) – B (middle, pin 2) – E (right, pin 3).
+   This C-B-E order comes from the onsemi `BC337-FSC/D` datasheet and is the canonical
+   orientation for the Mouser reference lot. Do not reuse the E-B-C orientation of a
+   different TO-92 transistor. If an AliExpress or otherwise substituted transistor is
+   tested for comparison, record its source and determine its actual pinout separately.
 3. Multimeter diode mode to identify Base (the pin that shows ~650mV to both others):
 
    | Red probe | Black probe | Expected (NPN) |
@@ -248,12 +250,15 @@ YAML block (`switch` + `interval`) before proceeding to Phase 4.
 
    This identifies Base reliably but does NOT distinguish Collector from Emitter.
 
-4. **Switching test in both orientations** to confirm C vs E:
-   - Orientation A: 3.3V → 470Ω → Base, 5V → **330Ω** → Red LED → pin X (presumed Collector), pin Y → GND
-   - Orientation B: swap pin X and pin Y
-   - Measure VCE (voltage between Collector candidate and Emitter candidate) in both orientations.
-     The correct orientation gives lower VCE (deeper saturation, ~0.1–0.2V).
-     Inverted orientation gives higher VCE (~0.5–1V) because the transistor operates in reverse mode.
+4. **Switching test**:
+   - For the onsemi `BC33740BU` reference part, wire the datasheet C-B-E orientation
+     directly; a second reversed C/E test is not required to rediscover its documented pinout.
+   - For an unknown-source or substituted transistor, test both orientations to identify C vs E:
+     - Orientation A: 3.3V → 470Ω → Base, 5V → **330Ω** → Red LED → pin X (presumed Collector), pin Y → GND
+     - Orientation B: swap pin X and pin Y
+     - Measure VCE (voltage between Collector candidate and Emitter candidate) in both orientations.
+       The correct orientation gives lower VCE (deeper saturation, ~0.1–0.2V).
+       Inverted orientation gives higher VCE (~0.5–1V) because the transistor operates in reverse mode.
    - If multimeter has hFE function: use it to confirm C/E directly
 
 **Gatekeeper 4**:
@@ -261,7 +266,8 @@ YAML block (`switch` + `interval`) before proceeding to Phase 4.
 | Test | Pass | Fail action |
 |------|------|-------------|
 | Diode mode: ~650mV from Base to both others | Base identified | Not NPN — discard, try another |
-| Switching test: one orientation has VCE < 0.3V, the other > 0.5V | C/E confirmed | Both similar → try another transistor |
+| onsemi `BC33740BU` wired C-B-E and VCE < 0.3V when ON | C/E orientation and switching confirmed | Recheck the flat-face reference and wiring against the onsemi datasheet |
+| Unknown-source substitute: one orientation has VCE < 0.3V, the other > 0.5V | C/E identified | Both similar → try another transistor |
 | LED OFF when Base disconnected | No leakage | Short circuit — discard transistor |
 
 ---

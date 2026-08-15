@@ -35,6 +35,11 @@ results rather than maintaining a separate inventory system.
 | 10 | Transistor NPN authentique | onsemi | `BC33740BU` | `512-BC33740BU` | BC337-40, 45 V, 800 mA, TO-92, conditionnement vrac | Référence A et B1 |
 | 10 | LED IR authentique | Vishay | `TSAL6400` | `782-TSAL6400` | 940 nm, angle ±25°, traversante | Piste A |
 
+Brochage canonique du `BC33740BU` onsemi, face plate vers soi et pattes vers le bas :
+**C-B-E** de gauche à droite (broche 1 collecteur, broche 2 base, broche 3 émetteur),
+conformément à la fiche technique onsemi `BC337-FSC/D`. Ne pas lui appliquer le brochage
+d'un autre transistor en boîtier TO-92.
+
 ### Pourquoi conserver des composants authentiques de référence
 
 Les BC337-40 et TSAL6400 déjà disponibles peuvent être utilisés pour comparaison. Les
