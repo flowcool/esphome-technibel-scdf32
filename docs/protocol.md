@@ -36,7 +36,7 @@ replayable — no rolling code.
 | B2 | `0x28` | Temperature (hi nibble) + fan speed (lo nibble) |
 | B3 | `0x18` | Power ON flag (`0x08` = OFF) |
 | B4 | `0x03` | Fixed — always `0x03` |
-| B5 | checksum | Computed from B2, B3, ambient temperature |
+| B5 | checksum | Computed from B1, B2, and B3 |
 
 ### Mode encoding (B1 low nibble)
 
@@ -80,12 +80,18 @@ Formula: `temp_hi = (reverseBits8(consigne - 4) >> 4) & 0xF`
 
 ### Fan speed encoding (B2 lo nibble)
 
-| Fan speed | lo nibble |
-|---|---|
-| AUTO | `0x8` |
-| LOW | `0xC` |
-| MED | `0xE` |
-| HIGH | `0xB` |
+| Remote level | lo nibble | Captured frame (FAN, 23°C, ambient 24°C) |
+|---|---|---|
+| AUTO | `0x8` | `D0 29 C8 18 03 51` |
+| FAN 1 / LOW | `0xC` | `D0 29 CC 18 03 55` |
+| FAN 2 | `0xA` | `D0 29 CA 18 03 53` |
+| FAN 3 / MED | `0xE` | `D0 29 CE 18 03 57` |
+| FAN 4 | `0x9` | `D0 29 C9 18 03 50` |
+| FAN 5 | `0xD` | `D0 29 CD 18 03 54` |
+| FAN 6 / HIGH | `0xB` | `D0 29 CB 18 03 52` |
+
+All seven values were captured in one controlled campaign on 2026-08-15. The
+complete raw timings are preserved in `captures/fan-campaign-2026-08-15.jsonl`.
 
 ### B2 full formula
 
@@ -109,13 +115,15 @@ Example: COOL, 24°C, AUTO fan → `B2 = (0x2 << 4) | 0x8 = 0x28`
 
 ```
 B5 = reverseBits8(
-       (reverseBits8(B2) + reverseBits8(B3) + T_ambient - 25) & 0xFF
+       (reverseBits8(B1) + reverseBits8(B2) + reverseBits8(B3) + 0xCB) & 0xFF
      )
 ```
 
-⚠️ The checksum includes the **ambient temperature** as read by the remote control.
-Use a Home Assistant temperature sensor for best accuracy. A fixed value of `25`
-works reliably for setpoints in the 18–26°C range.
+The ambient temperature is included indirectly through the high nibble of B1,
+and the operating mode through its low nibble. The former formula using
+`T_ambient - 25` was a COOL-only reduction: for COOL, B1's low nibble is fixed
+to `0xC`, so `reverseBits8(B1) + 0xCB` reduces to `T_ambient - 25` modulo 256.
+It must not be used for DRY, FAN, or AUTO frames.
 
 ### OFF frame (fixed)
 
@@ -168,7 +176,7 @@ statiques et rejouables — pas de code tournant.
 | B2 | `0x28` | Température (nibble hi) + vitesse ventilo (nibble lo) |
 | B3 | `0x18` | Flag marche (`0x08` = arrêt) |
 | B4 | `0x03` | Fixe — toujours `0x03` |
-| B5 | checksum | Calculé depuis B2, B3, température ambiante |
+| B5 | checksum | Calculé depuis B1, B2 et B3 |
 
 ### Encodage des modes (nibble bas de B1)
 
@@ -193,12 +201,19 @@ Voir tableau complet en section anglaise — valeurs identiques.
 
 ### Encodage vitesse ventilateur (nibble lo de B2)
 
-| Vitesse | nibble lo |
-|---|---|
-| AUTO | `0x8` |
-| LOW (faible) | `0xC` |
-| MED (moyen) | `0xE` |
-| HIGH (fort) | `0xB` |
+| Niveau télécommande | nibble lo | Trame capturée (FAN, 23°C, ambiante 24°C) |
+|---|---|---|
+| AUTO | `0x8` | `D0 29 C8 18 03 51` |
+| FAN 1 / LOW | `0xC` | `D0 29 CC 18 03 55` |
+| FAN 2 | `0xA` | `D0 29 CA 18 03 53` |
+| FAN 3 / MED | `0xE` | `D0 29 CE 18 03 57` |
+| FAN 4 | `0x9` | `D0 29 C9 18 03 50` |
+| FAN 5 | `0xD` | `D0 29 CD 18 03 54` |
+| FAN 6 / HIGH | `0xB` | `D0 29 CB 18 03 52` |
+
+Les sept valeurs ont été capturées pendant une campagne contrôlée le 2026-08-15.
+Les timings bruts complets sont conservés dans
+`captures/fan-campaign-2026-08-15.jsonl`.
 
 ### Formule complète de B2
 
@@ -220,13 +235,15 @@ B2 = (nibble_hi_temp << 4) | nibble_lo_ventilo
 
 ```
 B5 = inverseBits8(
-       (inverseBits8(B2) + inverseBits8(B3) + T_ambiant - 25) & 0xFF
+       (inverseBits8(B1) + inverseBits8(B2) + inverseBits8(B3) + 0xCB) & 0xFF
      )
 ```
 
-⚠️ Le checksum intègre la **température ambiante** lue par la télécommande.
-Utiliser un capteur de température Home Assistant pour une meilleure précision.
-Une valeur fixe de `25` fonctionne de manière fiable pour les consignes entre 18 et 26°C.
+La température ambiante est incluse indirectement par le nibble haut de B1, et
+le mode par son nibble bas. L'ancienne formule utilisant `T_ambiant - 25` était
+une réduction valable uniquement en mode COOL : le nibble bas de B1 y vaut
+toujours `0xC`, donc `inverseBits8(B1) + 0xCB` se réduit à `T_ambiant - 25`
+modulo 256. Elle ne doit pas être utilisée pour les modes DRY, FAN ou AUTO.
 
 ### Trame OFF (fixe)
 
