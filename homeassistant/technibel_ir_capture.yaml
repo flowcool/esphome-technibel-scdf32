@@ -1,0 +1,22 @@
+# Persist every complete sniffer capture as one JSON line.
+# The short summary remains available through the ESPHome entity history.
+
+automation:
+  - id: technibel_ir_capture_archive
+    alias: "Technibel IR — archiver les timings bruts"
+    description: "Append every native sniffer capture to a JSONL archive."
+    triggers:
+      - trigger: event
+        event_type: esphome.technibel_ir_capture
+    actions:
+      - action: logbook.log
+        data:
+          name: "Technibel IR raw capture"
+          message: >-
+            {{ {
+              "captured_at": trigger.event.data.captured_at,
+              "symbol_count": trigger.event.data.symbol_count,
+              "raw": trigger.event.data.raw
+            } | to_json }}
+    mode: queued
+    max: 100
