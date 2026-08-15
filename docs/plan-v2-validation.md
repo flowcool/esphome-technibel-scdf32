@@ -374,6 +374,11 @@ If NEC works, the hardware is validated. The Technibel protocol itself is valida
 5. Trigger `test_nec` from ESPHome dashboard (Developer Tools → Services)
 6. Check sniffer logs: NEC frame must appear with address 0x1234, command 0x5678
 
+   With ESPHome 2026.7, `dump: all` may label this capture `Beo4` and also emit a
+   Pronto/raw line instead of an explicit `NEC` line. In that case, decode the 32
+   NEC spaces manually: the expected little-endian bytes are `34 12 78 56`, which
+   correspond to address `0x1234` and command `0x5678`.
+
 **Logic analyzer verification** (parallel, safe on bench — no mains voltage involved):
 
 - The available analyzer is an 8-channel, 24 MHz USB analyzer labelled `CH1`–`CH8`
@@ -389,7 +394,7 @@ If NEC works, the hardware is validated. The Technibel protocol itself is valida
 
 | Test | Pass | Fail action |
 |------|------|-------------|
-| KY-022 decodes NEC in logs | Hardware IR chain validated | Check carrier_duty_percent, try esp-idf framework |
+| KY-022 decodes NEC in logs, or raw Pronto timings manually decode to `34 12 78 56` | Hardware IR chain validated | Check carrier_duty_percent, try esp-idf framework |
 | Logic analyzer shows 38kHz on GPIO3 | RMT works on C3 | Note exact error, check ESPHome version ≥2024.6, try esp-idf framework, verify no other component uses TX RMT channels |
 | Range > 30cm from KY-022 | Sufficient for Piste A at close range | Add 2nd TSAL6400 in parallel (each with own 47Ω). 1m+ range is nice-to-have, not a gate. |
 | Compiles without RMT error | Symbol allocation OK | Keep rmt_symbols: 96, check ESPHome version, check for conflicting RMT users |
