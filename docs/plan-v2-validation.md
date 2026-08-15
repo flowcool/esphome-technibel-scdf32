@@ -211,7 +211,9 @@ YAML block (`switch` + `interval`) before proceeding to Phase 4.
 **Actions**:
 
 1. Plug XIAO via USB-C to a good charger (≥500mA, ideally ≥1A)
-2. Multimeter DC between 5V pin and GND
+2. Multimeter DC between the `USB`/`VBUS` pin and GND. On some XIAO ESP32-C3
+   revisions the pin is silk-screened `USB` rather than `5V`; it is the USB-C
+   5 V rail, not the regulated `3V3` output.
 3. Load test: use a 100Ω resistor rated ≥0.5W (I=50mA, P=0.25W).
    Do NOT use 47Ω directly between 5V and GND: I=106mA, P=0.53W → exceeds ¼W rating.
    The real load test happens naturally in Phase 6 when the TSAL6400 circuit draws ~74mA.
