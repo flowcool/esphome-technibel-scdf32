@@ -1,0 +1,91 @@
+# Secondary Home Assistant MQTT climate for the soldered Piste A transmitter.
+#
+# This package is deliberately independent from climate-technibel-ha.yaml:
+# unique IDs, MQTT topics, automation IDs, and the ESPHome action are all
+# namespaced for Piste A. Both entities control the same physical appliance.
+
+mqtt:
+  climate:
+    - name: "Clim Séjour Piste A"
+      unique_id: clim_sejour_technibel_piste_a
+      default_entity_id: climate.clim_sejour_piste_a
+      icon: mdi:air-conditioner
+      device:
+        identifiers:
+          - technibel_scdf32_piste_a
+        name: "Technibel SCDF32 Piste A"
+        manufacturer: Technibel
+        model: SCDF32C5I IR bridge
+        hw_version: Piste A perfboard
+        suggested_area: Séjour
+      modes:
+        - "off"
+        - cool
+        - dry
+        - fan_only
+        - auto
+      fan_modes:
+        - auto
+        - "1"
+        - "2"
+        - "3"
+        - "4"
+        - "5"
+        - "6"
+      min_temp: 16
+      max_temp: 30
+      temp_step: 1
+      current_temperature_topic: "clim/sejour/piste_a/current_temperature"
+      mode_command_topic: "clim/sejour/piste_a/mode/set"
+      temperature_command_topic: "clim/sejour/piste_a/temperature/set"
+      fan_mode_command_topic: "clim/sejour/piste_a/fan_mode/set"
+      optimistic: true
+      temperature_unit: "C"
+      precision: 1.0
+
+automation:
+  - id: clim_sejour_piste_a_envoyer_ir
+    alias: "Clim Séjour Piste A — Envoyer commande IR"
+    description: "Send Piste A climate changes through the soldered ESPHome transmitter"
+    triggers:
+      - trigger: state
+        entity_id: climate.clim_sejour_piste_a
+    conditions:
+      - condition: template
+        value_template: >
+          {{ trigger.from_state is not none
+             and trigger.to_state is not none
+             and trigger.from_state.state not in ['unknown', 'unavailable']
+             and (trigger.from_state.state != trigger.to_state.state
+                  or trigger.from_state.attributes.temperature != trigger.to_state.attributes.temperature
+                  or trigger.from_state.attributes.fan_mode != trigger.to_state.attributes.fan_mode) }}
+    actions:
+      - action: esphome.ir_technibel_clim_piste_a_send_command
+        data:
+          mode: >
+            {{ {'off':'OFF','cool':'COOL','dry':'DRY','fan_only':'FAN','auto':'AUTO'}.get(states('climate.clim_sejour_piste_a'), 'OFF') }}
+          consigne: "{{ state_attr('climate.clim_sejour_piste_a', 'temperature') | int(22) }}"
+          fan: "{{ (state_attr('climate.clim_sejour_piste_a', 'fan_mode') or 'auto') | upper }}"
+          t_amb: >
+            {{ states('sensor.thermometre_espace_de_vie_temperature') | float(25) | round(0) | int }}
+    mode: restart
+
+  - id: clim_sejour_piste_a_publier_temperature
+    alias: "Clim Séjour Piste A — Publier température ambiante"
+    description: "Publish room temperature to the isolated Piste A MQTT topic"
+    triggers:
+      - trigger: state
+        entity_id: sensor.thermometre_espace_de_vie_temperature
+      - trigger: homeassistant
+        event: start
+    conditions:
+      - condition: template
+        value_template: >
+          {{ is_number(states('sensor.thermometre_espace_de_vie_temperature')) }}
+    actions:
+      - action: mqtt.publish
+        data:
+          topic: "clim/sejour/piste_a/current_temperature"
+          payload: "{{ states('sensor.thermometre_espace_de_vie_temperature') }}"
+          retain: true
+    mode: queued
