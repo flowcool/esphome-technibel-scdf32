@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <style>
+    text { font-family: DejaVu Sans, sans-serif; fill: #17202a; }
+    .title { font-size: 28px; font-weight: bold; }
+    .h { font-size: 20px; font-weight: bold; }
+    .t { font-size: 16px; }
+    .small { font-size: 13px; }
+    .board { fill: #087f8c; stroke: #044b52; stroke-width: 4; }
+    .module { fill: #20262c; stroke: #000; stroke-width: 3; }
+    .socket { fill: #111; stroke: #555; stroke-width: 2; }
+    .pad { fill: #e8d5a8; stroke: #755d28; stroke-width: 2; }
+    .five { stroke: #d62728; fill: none; stroke-width: 6; }
+    .gnd { stroke: #111; fill: none; stroke-width: 6; }
+    .sig { stroke: #ff9f1c; fill: none; stroke-width: 6; }
+    .drv { stroke: #7b2cbf; fill: none; stroke-width: 6; }
+    .component { fill: #f7f7f7; stroke: #333; stroke-width: 3; }
+    .note { fill: #fff7d6; stroke: #c29b20; stroke-width: 2; }
+  </style>
+
+  <text x="35" y="45" class="title">Piste A — XIAO ESP32-C3 + BC337-40 + TSAL6400</text>
+  <text x="35" y="75" class="t">Component-side view; insulated jumpers may run on the solder side. All perfboard pads are isolated.</text>
+
+  <!-- placement panel -->
+  <text x="55" y="120" class="h">Proposed placement on the 30 × 70 mm board</text>
+  <rect x="70" y="145" width="480" height="690" rx="8" class="board"/>
+
+  <!-- XIAO sockets, matching the photographed orientation: USB at left -->
+  <rect x="105" y="205" width="330" height="36" rx="6" class="socket"/>
+  <rect x="105" y="325" width="330" height="36" rx="6" class="socket"/>
+  <g>
+    <circle cx="130" cy="223" r="10" class="pad"/><circle cx="175" cy="223" r="10" class="pad"/>
+    <circle cx="220" cy="223" r="10" class="pad"/><circle cx="265" cy="223" r="10" class="pad"/>
+    <circle cx="310" cy="223" r="10" class="pad"/><circle cx="355" cy="223" r="10" class="pad"/>
+    <circle cx="400" cy="223" r="10" class="pad"/>
+    <circle cx="130" cy="343" r="10" class="pad"/><circle cx="175" cy="343" r="10" class="pad"/>
+    <circle cx="220" cy="343" r="10" class="pad"/><circle cx="265" cy="343" r="10" class="pad"/>
+    <circle cx="310" cy="343" r="10" class="pad"/><circle cx="355" cy="343" r="10" class="pad"/>
+    <circle cx="400" cy="343" r="10" class="pad"/>
+  </g>
+  <text x="112" y="192" class="small">5V</text><text x="160" y="192" class="small">GND</text>
+  <text x="204" y="192" class="small">3V3</text><text x="251" y="192" class="small">D10</text>
+  <text x="300" y="192" class="small">D9</text><text x="347" y="192" class="small">D8</text>
+  <text x="391" y="192" class="small">D7</text>
+  <text x="118" y="390" class="small">D0</text><text x="155" y="390" class="small">D1 / GPIO3</text>
+  <text x="209" y="410" class="small">D2</text><text x="255" y="390" class="small">D3</text>
+  <text x="301" y="390" class="small">D4</text><text x="346" y="390" class="small">D5</text>
+  <text x="391" y="390" class="small">D6</text>
+
+  <rect x="85" y="250" width="420" height="70" rx="12" class="module"/>
+  <text x="205" y="292" fill="white" style="font-family:DejaVu Sans;font-size:22px;font-weight:bold">XIAO ESP32-C3</text>
+  <rect x="48" y="267" width="55" height="38" class="component"/>
+  <text x="16" y="330" class="small">USB-C accessible</text>
+
+  <!-- existing decoupling cap -->
+  <line x1="220" y1="223" x2="220" y2="165" class="drv"/>
+  <line x1="175" y1="223" x2="175" y2="165" class="gnd"/>
+  <rect x="170" y="150" width="55" height="25" rx="6" class="component"/>
+  <text x="232" y="168" class="small">C1 100 nF: 3V3 ↔ GND</text>
+
+  <!-- driver components -->
+  <rect x="138" y="455" width="115" height="34" rx="12" class="component"/>
+  <text x="160" y="478" class="t">R1 470 Ω</text>
+  <path d="M175 343 L175 430 L138 430 L138 472" class="sig"/>
+  <path d="M253 472 L315 472" class="sig"/>
+
+  <rect x="315" y="440" width="155" height="105" rx="12" class="component"/>
+  <text x="332" y="466" class="t">BC337-40</text>
+  <text x="329" y="510" class="small">C</text><text x="387" y="510" class="small">B</text><text x="447" y="510" class="small">E</text>
+  <circle cx="335" cy="525" r="8" class="pad"/><circle cx="392" cy="525" r="8" class="pad"/><circle cx="450" cy="525" r="8" class="pad"/>
+  <text x="324" y="565" class="small">Flat face toward viewer: C–B–E</text>
+  <path d="M315 472 L392 472 L392 525" class="sig"/>
+
+  <rect x="195" y="565" width="115" height="34" rx="12" class="component"/>
+  <text x="215" y="588" class="t">R2 10 kΩ</text>
+  <path d="M392 525 L392 582 L310 582" class="drv"/>
+  <path d="M195 582 L150 582 L150 625 L450 625 L450 525" class="gnd"/>
+  <path d="M175 223 L175 625 L450 625" class="gnd"/>
+
+  <rect x="95" y="650" width="120" height="34" rx="12" class="component"/>
+  <text x="117" y="673" class="t">R3 47 Ω</text>
+  <path d="M130 223 L100 223 L100 667 L95 667" class="five"/>
+  <path d="M215 667 L265 667" class="five"/>
+  <ellipse cx="310" cy="667" rx="42" ry="28" fill="#562080" stroke="#222" stroke-width="3"/>
+  <text x="271" y="716" class="t">TSAL6400</text>
+  <text x="257" y="742" class="small">A (long) ←   → K (short)</text>
+  <path d="M352 667 L380 667 L380 610 L335 610 L335 525" class="drv"/>
+
+  <!-- local decoupling -->
+  <rect x="105" y="755" width="100" height="32" rx="8" class="component"/>
+  <text x="116" y="777" class="small">C2 100 nF</text>
+  <rect x="245" y="748" width="90" height="50" rx="8" class="component"/>
+  <text x="259" y="770" class="small">C3 100 µF</text><text x="265" y="790" class="small">+     −</text>
+  <path d="M105 771 L90 771 L90 667" class="five"/><path d="M205 771 L225 771 L225 810 L175 810 L175 625" class="gnd"/>
+  <path d="M245 773 L225 773 L225 667" class="five"/><path d="M335 773 L360 773 L360 810 L175 810" class="gnd"/>
+
+  <!-- electrical schematic panel -->
+  <text x="630" y="120" class="h">Electrical schematic / netlist</text>
+  <rect x="620" y="145" width="740" height="500" rx="12" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="655" y="195" class="t">XIAO 5V</text>
+  <path d="M750 190 L850 190" class="five"/>
+  <rect x="850" y="170" width="120" height="40" class="component"/><text x="875" y="197" class="t">47 Ω / 0.6 W</text>
+  <path d="M970 190 L1040 190" class="five"/>
+  <ellipse cx="1090" cy="190" rx="45" ry="30" fill="#562080" stroke="#222" stroke-width="3"/>
+  <text x="1068" y="245" class="small">TSAL6400</text><text x="1042" y="265" class="small">anode → cathode</text>
+  <path d="M1135 190 L1210 190 L1210 330" class="drv"/>
+  <text x="1220" y="250" class="small">Collector C</text>
+
+  <text x="655" y="355" class="t">D1 / GPIO3</text>
+  <path d="M775 350 L850 350" class="sig"/>
+  <rect x="850" y="330" width="120" height="40" class="component"/><text x="887" y="357" class="t">470 Ω</text>
+  <path d="M970 350 L1080 350" class="sig"/>
+  <circle cx="1135" cy="350" r="55" fill="#eaf2f8" stroke="#333" stroke-width="3"/>
+  <text x="1103" y="345" class="t">BC337</text><text x="1127" y="367" class="small">B</text>
+  <path d="M1080 350 L1080 440" class="drv"/>
+  <rect x="1020" y="440" width="120" height="40" class="component"/><text x="1055" y="467" class="t">10 kΩ</text>
+  <path d="M1080 480 L1080 540 L1210 540 L1210 405" class="gnd"/>
+  <text x="1220" y="420" class="small">Emitter E</text>
+  <path d="M650 540 L1300 540" class="gnd"/>
+  <text x="655" y="570" class="t">XIAO GND</text>
+
+  <path d="M730 190 L730 280" class="five"/><path d="M730 280 L730 540" class="gnd"/>
+  <rect x="695" y="265" width="70" height="35" class="component"/><text x="702" y="288" class="small">100 nF</text>
+  <path d="M790 190 L790 280" class="five"/><path d="M790 280 L790 540" class="gnd"/>
+  <rect x="770" y="265" width="80" height="35" class="component"/><text x="778" y="288" class="small">100 µF</text>
+
+  <rect x="620" y="675" width="740" height="160" rx="12" class="note"/>
+  <text x="645" y="710" class="h">Mandatory checks before power</text>
+  <text x="650" y="745" class="t">1. No continuity between 5V and GND.</text>
+  <text x="650" y="775" class="t">2. TSAL6400: long lead/anode toward 47 Ω; short lead/cathode toward collector.</text>
+  <text x="650" y="805" class="t">3. 100 µF: “−” stripe to GND. BC337 flat face: C–B–E for BC33740BU.</text>
+
+  <line x1="1000" y1="865" x2="1060" y2="865" class="five"/><text x="1070" y="871" class="small">5V</text>
+  <line x1="1130" y1="865" x2="1190" y2="865" class="gnd"/><text x="1200" y="871" class="small">GND</text>
+  <line x1="1260" y1="865" x2="1320" y2="865" class="sig"/><text x="1330" y="871" class="small">GPIO3</text>
+  <line x1="830" y1="865" x2="890" y2="865" class="drv"/><text x="900" y="871" class="small">3V3 / collector net</text>
+</svg>
