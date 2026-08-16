@@ -26,6 +26,7 @@ Coordinate convention: component-side view, USB-C toward row 1. The solder-side 
 | W20 | `GND` | BLACK | solder side | `G18` | `G20` | 5.1 mm |
 | W21 | `GND` | BLACK | solder side | `I17` | `I18` | 2.5 mm |
 | W22 | `GND` | BLACK | solder side | `I18` | `I19` | 2.5 mm |
+| W23 | `IR_ANODE` | YELLOW | solder side | `G21` | `F21` | 2.5 mm |
 
 ## Component coordinates
 
@@ -38,5 +39,5 @@ Coordinate convention: component-side view, USB-C toward row 1. The solder-side 
 | C1 | 100 nF | 2/GND=`I3`; 1/3V3=`I4` |
 | C2 | 100 nF | 2/GND=`I17`; 1/5V=`J17` |
 | C3 | 100 uF | 2/GND=`I19`; 1/+5V=`J19` |
-| R3 | 47 ohm / 0.6 W | 1/5V=`J21`; 2/IR_ANODE=`F21` |
+| R3 | 47 ohm / 0.6 W | 1/5V=`J21`; 2/IR_ANODE=`G21` |
 | D1 | fresh TSAL6400 | 2/A=`F23`; 1/K=`G23` |

@@ -117,6 +117,7 @@ WIRES = [
     ("W20", "GND", "BLACK", "G18", "G20"),
     ("W21", "GND", "BLACK", "I17", "I18"),
     ("W22", "GND", "BLACK", "I18", "I19"),
+    ("W23", "IR_ANODE", "YELLOW", "G21", "F21"),
 ]
 
 TOP_SIDE_JUMPERS = {"W11"}
@@ -164,7 +165,7 @@ def build_pcb() -> None:
     lines.append(footprint("C1", "100 nF", [("2", "I3", "GND"), ("1", "I4", "+3V3")], ("I3", "I4")))
     lines.append(footprint("C2", "100 nF", [("2", "I17", "GND"), ("1", "J17", "+5V")], ("I17", "J17")))
     lines.append(footprint("C3", "100 uF", [("2", "I19", "GND"), ("1", "J19", "+5V")], ("I19", "J19")))
-    lines.append(footprint("R3", "47 ohm / 0.6 W", [("1", "J21", "+5V"), ("2", "F21", "IR_ANODE")], ("F21", "J21")))
+    lines.append(footprint("R3", "47 ohm / 0.6 W", [("1", "J21", "+5V"), ("2", "G21", "IR_ANODE")], ("G21", "J21")))
     lines.append(footprint("D1", "TSAL6400", [("2", "F23", "IR_ANODE"), ("1", "G23", "IR_CATHODE")], ("F23", "G23")))
 
     # Board edge and coordinate grid.
@@ -232,7 +233,7 @@ def build_wire_table() -> None:
         "| C1 | 100 nF | 2/GND=`I3`; 1/3V3=`I4` |\n",
         "| C2 | 100 nF | 2/GND=`I17`; 1/5V=`J17` |\n",
         "| C3 | 100 uF | 2/GND=`I19`; 1/+5V=`J19` |\n",
-        "| R3 | 47 ohm / 0.6 W | 1/5V=`J21`; 2/IR_ANODE=`F21` |\n",
+        "| R3 | 47 ohm / 0.6 W | 1/5V=`J21`; 2/IR_ANODE=`G21` |\n",
         "| D1 | fresh TSAL6400 | 2/A=`F23`; 1/K=`G23` |\n",
     ])
     WIRE_TABLE.write_text("".join(rows), encoding="utf-8")
