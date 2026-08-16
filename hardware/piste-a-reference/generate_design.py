@@ -100,18 +100,23 @@ WIRES = [
     ("W03", "GPIO3", "YELLOW", "A11", "B11"),
     ("W04", "BASE", "YELLOW", "E11", "E18"),
     ("W05", "BASE", "YELLOW", "E18", "E20"),
-    ("W06", "+3V3", "YELLOW", "H6", "I6"),
-    ("W07", "GND", "BLACK", "H7", "I7"),
-    ("W08", "GND", "BLACK", "I7", "I20"),
-    ("W09", "GND", "BLACK", "F18", "I18"),
-    ("W10", "GND", "BLACK", "H20", "I20"),
-    ("W11", "+5V", "RED", "H8", "J8"),
-    ("W12", "+5V", "RED", "J8", "J21"),
+    ("W06", "+3V3", "YELLOW", "H4", "I4"),
+    ("W07", "GND", "BLACK", "H3", "I3"),
+    ("W08", "GND", "BLACK", "I3", "G3"),
+    ("W09", "GND", "BLACK", "F18", "G18"),
+    ("W10", "GND", "BLACK", "H20", "G20"),
+    ("W11", "+5V", "RED", "H2", "J2"),
+    ("W12", "+5V", "RED", "J2", "J21"),
     ("W13", "IR_ANODE", "YELLOW", "F21", "F23"),
     ("W14", "IR_CATHODE", "YELLOW", "D18", "C18"),
     ("W15", "IR_CATHODE", "YELLOW", "C18", "C24"),
     ("W16", "IR_CATHODE", "YELLOW", "C24", "G24"),
     ("W17", "IR_CATHODE", "YELLOW", "G24", "G23"),
+    ("W18", "GND", "BLACK", "G3", "G18"),
+    ("W19", "GND", "BLACK", "G18", "I18"),
+    ("W20", "GND", "BLACK", "G18", "G20"),
+    ("W21", "GND", "BLACK", "I17", "I18"),
+    ("W22", "GND", "BLACK", "I18", "I19"),
 ]
 
 TOP_SIDE_JUMPERS = {"W11"}
@@ -146,8 +151,8 @@ def build_pcb() -> None:
     u1_pads = [
         ("1", "B2", None), ("2", "B3", "GPIO3"), ("3", "B4", None),
         ("4", "B5", None), ("5", "B6", None), ("6", "B7", None), ("7", "B8", None),
-        ("14", "H2", None), ("13", "H3", None), ("12", "H4", None), ("11", "H5", None),
-        ("10", "H6", "+3V3"), ("9", "H7", "GND"), ("8", "H8", "+5V"),
+        ("8", "H2", "+5V"), ("9", "H3", "GND"), ("10", "H4", "+3V3"),
+        ("14", "H5", None), ("13", "H6", None), ("12", "H7", None), ("11", "H8", None),
     ]
     lines.append(footprint(
         "U1", "XIAO ESP32-C3", u1_pads, ("A1", "I9"),
@@ -156,7 +161,7 @@ def build_pcb() -> None:
     lines.append(footprint("R1", "470 ohm", [("2", "B11", "GPIO3"), ("1", "E11", "BASE")], ("B11", "E11")))
     lines.append(footprint("Q1", "BC33740BU C-B-E", [("1", "D18", "IR_CATHODE"), ("2", "E18", "BASE"), ("3", "F18", "GND")], ("D18", "F18")))
     lines.append(footprint("R2", "10 kohm", [("1", "E20", "BASE"), ("2", "H20", "GND")], ("E20", "H20")))
-    lines.append(footprint("C1", "100 nF", [("1", "I6", "+3V3"), ("2", "I7", "GND")], ("I6", "I7")))
+    lines.append(footprint("C1", "100 nF", [("2", "I3", "GND"), ("1", "I4", "+3V3")], ("I3", "I4")))
     lines.append(footprint("C2", "100 nF", [("2", "I17", "GND"), ("1", "J17", "+5V")], ("I17", "J17")))
     lines.append(footprint("C3", "100 uF", [("2", "I19", "GND"), ("1", "J19", "+5V")], ("I19", "J19")))
     lines.append(footprint("R3", "47 ohm / 0.6 W", [("1", "J21", "+5V"), ("2", "F21", "IR_ANODE")], ("F21", "J21")))
@@ -192,9 +197,9 @@ def build_pcb() -> None:
             f'  (segment (start {fmt(sx)} {fmt(sy)}) (end {fmt(ex)} {fmt(ey)}) '
             f'(width 0.55) (layer "{layer}") (net {NETS[net]}))\n'
         )
-    # J8 is the soldered handoff between the component-side 5 V jumper W11
+    # J2 is the soldered handoff between the component-side 5 V jumper W11
     # and the solder-side 5 V rail W12.
-    j8x, j8y = xy("J8")
+    j8x, j8y = xy("J2")
     lines.append(
         f'  (via (at {fmt(j8x)} {fmt(j8y)}) (size 1.8) (drill 1) '
         f'(layers "F.Cu" "B.Cu") (net {NETS["+5V"]}))\n'
@@ -220,11 +225,11 @@ def build_wire_table() -> None:
         "\n## Component coordinates\n\n",
         "| Ref | Value | Pin coordinates |\n",
         "|---|---|---|\n",
-        "| U1 | XIAO ESP32-C3, 2x7 sockets | pin 2/D1/GPIO3=`B3`; pin 10/3V3=`H6`; pin 9/GND=`H7`; pin 8/5V=`H8`; all 14 pins represented |\n",
+        "| U1 | XIAO ESP32-C3, 2x7 sockets | pin 2/D1/GPIO3=`B3`; pin 8/5V=`H2`; pin 9/GND=`H3`; pin 10/3V3=`H4`; all 14 pins represented |\n",
         "| R1 | 470 ohm | 2/GPIO3=`B11`; 1/BASE=`E11` |\n",
         "| Q1 | BC33740BU | 1/C=`D18`; 2/B=`E18`; 3/E=`F18` |\n",
         "| R2 | 10 kohm | 1/BASE=`E20`; 2/GND=`H20` |\n",
-        "| C1 | 100 nF | 1/3V3=`I6`; 2/GND=`I7` |\n",
+        "| C1 | 100 nF | 2/GND=`I3`; 1/3V3=`I4` |\n",
         "| C2 | 100 nF | 2/GND=`I17`; 1/5V=`J17` |\n",
         "| C3 | 100 uF | 2/GND=`I19`; 1/+5V=`J19` |\n",
         "| R3 | 47 ohm / 0.6 W | 1/5V=`J21`; 2/IR_ANODE=`F21` |\n",

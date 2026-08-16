@@ -16,15 +16,15 @@ board. The previous hand-drawn/SVG layout is obsolete and must not be used.
 
 The schematic and PCB both represent the complete 2×7 XIAO socket:
 
-| Left row | Function | Right row | Function |
+| Left row, top to bottom | Function | Right row, top to bottom | Function |
 |---:|---|---:|---|
-| 1 | D0 | 14 | D10 |
-| 2 | D1 / GPIO3 | 13 | D9 |
-| 3 | D2 | 12 | D8 |
-| 4 | D3 | 11 | D7 |
-| 5 | D4 | 10 | 3V3 |
-| 6 | D5 | 9 | GND |
-| 7 | D6 | 8 | 5V / VBUS |
+| 1 | D0 | 8 | 5V / VBUS |
+| 2 | D1 / GPIO3 | 9 | GND |
+| 3 | D2 | 10 | 3V3 |
+| 4 | D3 | 14 | D10 |
+| 5 | D4 | 13 | D9 |
+| 6 | D5 | 12 | D8 |
+| 7 | D6 | 11 | D7 |
 
 Only pins 2, 8, 9, and 10 are electrically used by this board. All other XIAO
 pins remain available and unconnected.
@@ -40,12 +40,11 @@ pins remain available and unconnected.
 
 ## Construction hold point
 
-Do not solder from the KiCad editor alone. Review these four artifacts together:
+Before soldering, review these native and textual artifacts together:
 
-1. `generated/piste-a-reference-schematic.pdf`
-2. `generated/assembly/component-side.pdf`
-3. `generated/assembly/solder-side-mirrored.pdf`
-4. `wiring-table.md`
+1. `piste-a-reference.kicad_sch`
+2. `piste-a-reference.kicad_pcb`
+3. `wiring-table.md`
 
 The current partially assembled board remains untouched as rollback/evidence.
 Construction uses a new perfboard and fresh driver components.

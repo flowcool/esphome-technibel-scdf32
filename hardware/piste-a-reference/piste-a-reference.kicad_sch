@@ -2,7 +2,7 @@
 	(version 20250114)
 	(generator "eeschema")
 	(generator_version "9.0")
-	(uuid "856c41ab-4b76-4ee7-a613-072f0c693ee5")
+	(uuid "abe5f405-877c-40a2-a647-37b238feab8d")
 	(paper "A4")
 	(title_block
 		(title "Technibel Piste A reference perfboard")
@@ -1313,7 +1313,7 @@
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced no)
-		(uuid "d6038175-9d0e-4acc-b37f-3728a0f514d7")
+		(uuid "d0b03633-1312-433d-bceb-3ce5fb58e540")
 		(property "Reference" "U1"
 			(at 36.83 99.06 0.0000)
 			(effects
@@ -1333,50 +1333,50 @@
 			)
 		)
 		(pin "1"
-			(uuid "15c6594c-59c0-48e4-8757-82052ccb6a3d")
+			(uuid "9343fb85-68f1-4ec1-b871-9ea99aa48d0d")
 		)
 		(pin "2"
-			(uuid "a64f45c9-6a89-41bf-97a1-58aaf5cdf4af")
+			(uuid "5a58a983-3c25-46ed-9af3-fc72a4187ab5")
 		)
 		(pin "3"
-			(uuid "4c745b3c-72f5-4ed0-a01a-5e4055f6a92d")
+			(uuid "2f17499a-5a94-4cd3-bad8-1da7deed07f4")
 		)
 		(pin "4"
-			(uuid "c42487d0-8b50-4fb6-84e8-75c176556b20")
+			(uuid "697c81d4-53be-4f1c-adf5-7f9c746c69d1")
 		)
 		(pin "5"
-			(uuid "017376ac-943e-4729-ac39-e761b3cd86a7")
+			(uuid "8be6b6db-7c80-4e39-a766-318942055095")
 		)
 		(pin "6"
-			(uuid "434a3903-4182-47b9-b7b9-0fad13a8a5a6")
+			(uuid "d896d851-9f8f-4aaa-ae84-5d5668778296")
 		)
 		(pin "7"
-			(uuid "8d9f2c86-f103-46da-8ee2-44abbc8e2444")
+			(uuid "19051fa2-1998-4f85-8baf-40dbceba7ef2")
 		)
 		(pin "14"
-			(uuid "ab74aeaa-9025-4892-8e1d-140ff01e94a8")
+			(uuid "a5a2dea2-f2d5-4f13-a54e-b8f587fb7d26")
 		)
 		(pin "13"
-			(uuid "ddbfd2b8-6db4-4b58-acfa-85de3abc8c8d")
+			(uuid "c6a01954-de5c-4c7d-99e4-38f5836d1f4a")
 		)
 		(pin "12"
-			(uuid "d30e1783-b4c0-41cd-915a-0b456559d370")
+			(uuid "5f617104-84f0-485d-a81b-f391514af792")
 		)
 		(pin "11"
-			(uuid "fe0a5e7e-52f2-457f-bfc8-834ebc32159e")
+			(uuid "6da1f04a-b570-4fd3-9a24-b9b279d69a30")
 		)
 		(pin "10"
-			(uuid "ecf0ee07-8cf4-4b5b-8aad-e3f4722ff105")
+			(uuid "ab1d7197-1f16-4249-a9dc-5a2e3003011b")
 		)
 		(pin "9"
-			(uuid "9c18986b-48f0-43f8-8fc2-d59d0a9b4546")
+			(uuid "eebd2b31-a7b9-4b80-92c9-a25cf86a643d")
 		)
 		(pin "8"
-			(uuid "bf4ed15a-d51c-4944-9c82-f9bc2d4ca21e")
+			(uuid "c1dea36e-e975-4f9b-a183-804f33a2bfb7")
 		)
 		(instances
 			(project "Technibel Piste A reference perfboard"
-				(path "/856c41ab-4b76-4ee7-a613-072f0c693ee5"
+				(path "/abe5f405-877c-40a2-a647-37b238feab8d"
 					(reference "U1")
 					(unit 1)
 				)
@@ -1392,7 +1392,7 @@
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced no)
-		(uuid "aff899da-3850-444d-aa00-baf556c1f687")
+		(uuid "c4a501bc-c314-4a6e-9296-f7de6c83cc48")
 		(property "Reference" "R1"
 			(at 63.5 78.232 180)
 			(effects
@@ -1412,14 +1412,14 @@
 			)
 		)
 		(pin "1"
-			(uuid "89043922-a207-4bd5-83a7-d29e207c9f14")
+			(uuid "c1f25570-e9da-4117-917b-1b5d9a1a751b")
 		)
 		(pin "2"
-			(uuid "e2c9dd96-9702-4f0c-9d68-a9b0a07f0176")
+			(uuid "8600eff4-b11e-4881-9468-0f02e262d7b0")
 		)
 		(instances
 			(project "Technibel Piste A reference perfboard"
-				(path "/856c41ab-4b76-4ee7-a613-072f0c693ee5"
+				(path "/abe5f405-877c-40a2-a647-37b238feab8d"
 					(reference "R1")
 					(unit 1)
 				)
@@ -1435,7 +1435,7 @@
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced no)
-		(uuid "740c739a-0f70-480e-8ab4-f0a00a81879a")
+		(uuid "52bfffaf-fe68-4633-ac99-bf47b76206e5")
 		(property "Reference" "Q1"
 			(at 93.98 90.17 0.0000)
 			(effects
@@ -1455,17 +1455,17 @@
 			)
 		)
 		(pin "2"
-			(uuid "4fb132b6-74a9-416a-946b-0a257d2c3a06")
+			(uuid "a3d5a979-250c-4f97-8411-ef28d01efcc1")
 		)
 		(pin "1"
-			(uuid "72923555-a1f2-4885-9ae7-eac2544659f1")
+			(uuid "6241214b-7350-4359-9772-b239dcca76b6")
 		)
 		(pin "3"
-			(uuid "585b9a2f-8d88-44c2-b981-3955fb3da0ab")
+			(uuid "17fdb762-7248-4566-8498-4d07b3a98199")
 		)
 		(instances
 			(project "Technibel Piste A reference perfboard"
-				(path "/856c41ab-4b76-4ee7-a613-072f0c693ee5"
+				(path "/abe5f405-877c-40a2-a647-37b238feab8d"
 					(reference "Q1")
 					(unit 1)
 				)
@@ -1481,7 +1481,7 @@
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced no)
-		(uuid "baeb65cb-e9f0-415e-8d82-c7696f182649")
+		(uuid "0f9cd805-3209-4e32-bf7d-7cafdf9449e7")
 		(property "Reference" "R2"
 			(at 78.232 104.14 90)
 			(effects
@@ -1501,14 +1501,14 @@
 			)
 		)
 		(pin "1"
-			(uuid "915a2e80-a46e-4bd7-84fb-1c76783160f1")
+			(uuid "5e72df58-bd5c-4cd6-b822-34c8b618977b")
 		)
 		(pin "2"
-			(uuid "7acb8ac1-6d81-4c50-b501-c1e5d4ca3bae")
+			(uuid "d90d1fda-addc-4b24-8f45-f0f9951924f9")
 		)
 		(instances
 			(project "Technibel Piste A reference perfboard"
-				(path "/856c41ab-4b76-4ee7-a613-072f0c693ee5"
+				(path "/abe5f405-877c-40a2-a647-37b238feab8d"
 					(reference "R2")
 					(unit 1)
 				)
@@ -1524,7 +1524,7 @@
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced no)
-		(uuid "d929d56c-4ad4-4fb5-b5e0-24c9ef436ce1")
+		(uuid "5499c1f8-e802-442d-9883-b869f6ffc1a9")
 		(property "Reference" "D1"
 			(at 109.22 78.74 0.0000)
 			(effects
@@ -1544,14 +1544,14 @@
 			)
 		)
 		(pin "1"
-			(uuid "6d5a14cc-846a-4228-be6b-0a8afbaef4b2")
+			(uuid "cc58a5f1-20b8-4ffc-a804-b420b004486a")
 		)
 		(pin "2"
-			(uuid "c87f7477-b602-448b-aa88-5ed2ecc1fb43")
+			(uuid "0998be25-483f-411c-987c-c65c9664dfd0")
 		)
 		(instances
 			(project "Technibel Piste A reference perfboard"
-				(path "/856c41ab-4b76-4ee7-a613-072f0c693ee5"
+				(path "/abe5f405-877c-40a2-a647-37b238feab8d"
 					(reference "D1")
 					(unit 1)
 				)
@@ -1567,7 +1567,7 @@
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced no)
-		(uuid "4661e0b4-7e72-4f41-a575-21388ec8d153")
+		(uuid "38a7f8da-48ac-4699-9b96-434e79d47ef8")
 		(property "Reference" "R3"
 			(at 132.08 78.232 180)
 			(effects
@@ -1587,14 +1587,14 @@
 			)
 		)
 		(pin "1"
-			(uuid "fd8ca1cb-5ff6-45d0-a1b3-9b370e333940")
+			(uuid "0736fa8e-ceea-4a0d-af3e-cc9b0e3bed50")
 		)
 		(pin "2"
-			(uuid "a749c721-c086-417f-99bf-fc971244b469")
+			(uuid "d4fff49c-3903-42ab-966e-d06701ae2ed4")
 		)
 		(instances
 			(project "Technibel Piste A reference perfboard"
-				(path "/856c41ab-4b76-4ee7-a613-072f0c693ee5"
+				(path "/abe5f405-877c-40a2-a647-37b238feab8d"
 					(reference "R3")
 					(unit 1)
 				)
@@ -1610,7 +1610,7 @@
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced no)
-		(uuid "72830ba4-eff4-4015-9b0d-5f3795e3a4ae")
+		(uuid "c4d4d563-a434-4005-ae53-4c35deecfc5d")
 		(property "Reference" "C2"
 			(at 120.015 104.14 0.0000)
 			(effects
@@ -1630,14 +1630,14 @@
 			)
 		)
 		(pin "1"
-			(uuid "96860cdc-49b2-4041-b992-9b6fb975aa19")
+			(uuid "cf9489c5-a242-4cb3-ab30-5555e09664b0")
 		)
 		(pin "2"
-			(uuid "1fdbb6c5-a6fd-4d8d-83e5-88f8f7e19f03")
+			(uuid "60104962-8149-4e1d-8c7b-053f673cd299")
 		)
 		(instances
 			(project "Technibel Piste A reference perfboard"
-				(path "/856c41ab-4b76-4ee7-a613-072f0c693ee5"
+				(path "/abe5f405-877c-40a2-a647-37b238feab8d"
 					(reference "C2")
 					(unit 1)
 				)
@@ -1653,7 +1653,7 @@
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced no)
-		(uuid "f70baa98-284f-47f9-a255-251ec0eefac1")
+		(uuid "d3d74719-eb7a-4818-82cf-d00d44a27d7d")
 		(property "Reference" "C3"
 			(at 135.255 104.14 0.0000)
 			(effects
@@ -1673,14 +1673,14 @@
 			)
 		)
 		(pin "1"
-			(uuid "dffaa61c-b846-487b-91f7-ab54d1f13cd7")
+			(uuid "3870f9d6-bf65-43a7-bb7d-a5620644cf68")
 		)
 		(pin "2"
-			(uuid "4a134835-737f-4663-bc2a-a89c61f7d03d")
+			(uuid "abb2cbce-8114-4b1a-bb19-cba72ddbc88e")
 		)
 		(instances
 			(project "Technibel Piste A reference perfboard"
-				(path "/856c41ab-4b76-4ee7-a613-072f0c693ee5"
+				(path "/abe5f405-877c-40a2-a647-37b238feab8d"
 					(reference "C3")
 					(unit 1)
 				)
@@ -1696,7 +1696,7 @@
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced no)
-		(uuid "acda51db-c81b-4813-b93f-e70cadc3f157")
+		(uuid "0a1126a5-3f9b-4bd2-9bc2-a2fb5ad5c440")
 		(property "Reference" "C1"
 			(at 56.515 119.38 0.0000)
 			(effects
@@ -1716,14 +1716,14 @@
 			)
 		)
 		(pin "1"
-			(uuid "9d0ac6ba-a76c-4ff2-9851-60f998ad7a2b")
+			(uuid "3d96e9ce-3bda-494d-98e5-bbb57c9104a2")
 		)
 		(pin "2"
-			(uuid "750d9947-519b-4e42-bca5-bdf85ddd5224")
+			(uuid "56618a7d-a5c3-417d-b341-d8107baeb044")
 		)
 		(instances
 			(project "Technibel Piste A reference perfboard"
-				(path "/856c41ab-4b76-4ee7-a613-072f0c693ee5"
+				(path "/abe5f405-877c-40a2-a647-37b238feab8d"
 					(reference "C1")
 					(unit 1)
 				)
@@ -1738,7 +1738,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "b474a99b-26e9-443f-8b22-d8c13a4ba225")
+		(uuid "8b11f292-c509-4e60-ae98-0716f87eb0c8")
 	)
 	(label "GPIO3"
 		(at 67.31 76.2 180)
@@ -1748,7 +1748,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "b6775dd6-6268-4d75-852a-d61867594f7a")
+		(uuid "33297eba-ea45-48aa-8b12-9a0ff3d5b0df")
 	)
 	(label "BASE"
 		(at 59.69 76.2 0.0000)
@@ -1758,7 +1758,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "c5390089-91ad-4873-8c10-be53b38347b9")
+		(uuid "a0695548-86e1-4d96-bee5-e902d86c0182")
 	)
 	(label "BASE"
 		(at 83.82 88.9 180)
@@ -1768,7 +1768,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "a5d38052-2dd1-4f20-83cd-cf510250402a")
+		(uuid "7cb4bc65-b995-4310-b70b-3f815057a3c3")
 	)
 	(label "BASE"
 		(at 76.2 100.33 90)
@@ -1778,7 +1778,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "794a8812-a332-4b3c-a9d4-b19b86d41420")
+		(uuid "4e9c037d-c1c0-43b6-8a26-be8532190069")
 	)
 	(label "GND"
 		(at 43.18 93.98 0.0000)
@@ -1788,7 +1788,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "3d5a3412-e4c0-44aa-a902-198e07907632")
+		(uuid "9302aacc-8fb8-4a38-912d-3c42ab6013d1")
 	)
 	(label "GND"
 		(at 91.44 93.98 270)
@@ -1798,7 +1798,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "8bb675d6-0e52-4473-a869-a4f5bd849530")
+		(uuid "50e91a50-af70-498a-9cef-113c62577637")
 	)
 	(label "GND"
 		(at 76.2 107.95 270)
@@ -1808,7 +1808,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "9de15029-b7bb-4847-8e1c-a3603fe3da20")
+		(uuid "5268dbe2-e599-4445-af14-5a8ef428a728")
 	)
 	(label "GND"
 		(at 55.88 120.65 270)
@@ -1818,7 +1818,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "1fa11763-d9a5-4e2e-92c9-ea08bfd35d23")
+		(uuid "1a5bc6eb-fcce-49bb-a54c-3f6c266a686a")
 	)
 	(label "GND"
 		(at 119.38 105.41 270)
@@ -1828,7 +1828,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "bbf85b96-3e7e-4764-b736-3fc14142fc21")
+		(uuid "1a576c57-5407-49d3-ae92-25a1bbd57e9a")
 	)
 	(label "GND"
 		(at 134.62 105.41 270)
@@ -1838,7 +1838,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "0c15ef96-884b-4203-b35b-f3bf45f1b6f2")
+		(uuid "5c2bd43e-33be-4b02-99cc-31c310c126f3")
 	)
 	(label "IR_CATHODE"
 		(at 91.44 83.82 90)
@@ -1848,7 +1848,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "cc35bf5a-7e91-4fb0-9a22-762722167aff")
+		(uuid "4b15cd27-349c-4e71-9769-3c3267ea67cc")
 	)
 	(label "IR_CATHODE"
 		(at 105.41 76.2 180)
@@ -1858,7 +1858,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "7276adcd-9284-4517-bf58-7d1052579caa")
+		(uuid "c4034720-2844-4b49-ade8-ebad47bcfeb1")
 	)
 	(label "IR_ANODE"
 		(at 113.03 76.2 0.0000)
@@ -1868,7 +1868,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "7b2a45cc-4c80-4f74-9f65-3bb08aa108ba")
+		(uuid "3336e91e-8e09-46c1-91aa-ce088642558b")
 	)
 	(label "IR_ANODE"
 		(at 135.89 76.2 180)
@@ -1878,7 +1878,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "6c298d1a-7daf-406e-a290-88dd7c350af5")
+		(uuid "e8276f1f-4497-4172-b08b-5f7617eeafb6")
 	)
 	(label "+5V"
 		(at 43.18 96.52 0.0000)
@@ -1888,7 +1888,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "00a8275b-7df4-412f-a234-b9b52a620d98")
+		(uuid "159c393c-0db9-4450-b912-5c0976872b6f")
 	)
 	(label "+5V"
 		(at 128.27 76.2 0.0000)
@@ -1898,7 +1898,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "e7bce054-2618-43fd-94fa-72f23ff19e7e")
+		(uuid "53704e81-fccc-41e8-8735-fcddd4d38f53")
 	)
 	(label "+5V"
 		(at 119.38 97.79 90)
@@ -1908,7 +1908,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "cf3d99fd-23c3-47e3-9c27-18d39dac54d2")
+		(uuid "796585de-ad99-4d9a-9344-537d30d4a77c")
 	)
 	(label "+5V"
 		(at 134.62 97.79 90)
@@ -1918,7 +1918,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "0c13dac5-d9cc-4771-96fa-3e0a334d2352")
+		(uuid "7f9d122c-27ea-41e0-9eb5-dfa98a11daad")
 	)
 	(label "+3V3"
 		(at 43.18 91.44 0.0000)
@@ -1928,7 +1928,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "dd02a786-199c-40fb-b8c0-6ef6fc6e6e7d")
+		(uuid "8e41d8ba-b1e6-456e-812e-88e1409c7a62")
 	)
 	(label "+3V3"
 		(at 55.88 113.03 90)
@@ -1938,47 +1938,47 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "d6ca57e6-dd71-4438-8d53-7ed3ec6dc455")
+		(uuid "da427865-ba4a-41ac-83b6-42296b519782")
 	)
 	(no_connect
 		(at 30.48 81.28)
-		(uuid "ce4cdaf4-1fe0-4c0b-97f3-33f3e4e51fc4")
+		(uuid "ea35809f-d0a4-4db4-a081-0a0bf2425f53")
 	)
 	(no_connect
 		(at 30.48 86.36)
-		(uuid "9fcce538-07a8-49f1-8c8b-95aaf0c8820d")
+		(uuid "2526f1e9-8556-4fac-b646-bc8cd0dfc2e3")
 	)
 	(no_connect
 		(at 30.48 88.9)
-		(uuid "91b394d7-267f-447f-aa7f-785249c57f96")
+		(uuid "bd19432e-6d78-4d89-96c1-42faa2f0fc6e")
 	)
 	(no_connect
 		(at 30.48 91.44)
-		(uuid "e9671f5a-0f55-47d8-af17-5c0621f8daa2")
+		(uuid "a073456a-2491-489e-887c-0923c2256b18")
 	)
 	(no_connect
 		(at 30.48 93.98)
-		(uuid "abda5dbf-7d35-4ea3-9fb2-cf59cd9f7857")
+		(uuid "a8b29a85-b5fc-4198-a24e-3c33adbd254a")
 	)
 	(no_connect
 		(at 30.48 96.52)
-		(uuid "8e725f3a-4621-4103-bce5-c86bae04699a")
+		(uuid "499a0323-eb69-48d2-8a7d-aafde287a9fb")
 	)
 	(no_connect
 		(at 43.18 88.9)
-		(uuid "048afdf6-6ee9-41c1-ad83-11bc736bfaae")
+		(uuid "b3df7738-537f-4165-bafe-53fc4dc024f2")
 	)
 	(no_connect
 		(at 43.18 86.36)
-		(uuid "c5709ca9-e3ff-45b3-8144-e7209785501d")
+		(uuid "581cb9c8-99eb-4177-95bd-1b8a167dd905")
 	)
 	(no_connect
 		(at 43.18 83.82)
-		(uuid "fab57802-5676-4063-b084-50db972fa5b5")
+		(uuid "df3da938-944d-4a51-9e14-4b012eb321d0")
 	)
 	(no_connect
 		(at 43.18 81.28)
-		(uuid "0389cbb5-c952-44c3-9d76-271323ef385d")
+		(uuid "9e412426-45df-4702-93a6-af591e4b88ea")
 	)
 	(text "Canonical circuit — physical routing is checked separately on the perfboard layout."
 		(exclude_from_sim no)
@@ -1989,7 +1989,7 @@
 				(bold yes)
 			)
 		)
-		(uuid "d3d78e80-2eac-41d8-800d-04b67403b0f3")
+		(uuid "eb8b3bf6-b266-4bb3-bbe6-ad5477087a46")
 	)
 	(text "D1 pin 1 = K/cathode to Q1.C; D1 pin 2 = A/anode to R3. C2 and C3 are directly across 5V/GND before R3."
 		(exclude_from_sim no)
@@ -1999,7 +1999,7 @@
 				(size 1.27 1.27)
 			)
 		)
-		(uuid "36b4282a-b395-4aa6-bb6f-e2032fefd177")
+		(uuid "f15dbe0e-65c5-4231-a8b9-f3c319ab9493")
 	)
 	(text "Q1 BC33740BU pin 1=C, pin 2=B, pin 3=E. XIAO GPIOs are not 5 V tolerant."
 		(exclude_from_sim no)
@@ -2009,7 +2009,7 @@
 				(size 1.27 1.27)
 			)
 		)
-		(uuid "a1cfde63-d469-4bc5-a6a2-1dfc7f89844f")
+		(uuid "e25bcbaf-01c8-4628-ada5-1adc59092c0d")
 	)
 	(text "U1 pins: 1=D0, 2=D1/GPIO3, 3=D2, 4=D3, 5=D4, 6=D5, 7=D6; 8=5V, 9=GND, 10=3V3, 11=D7, 12=D8, 13=D9, 14=D10."
 		(exclude_from_sim no)
@@ -2019,7 +2019,7 @@
 				(size 1.27 1.27)
 			)
 		)
-		(uuid "66893c94-c8c6-4eef-b4f4-94ac65a81057")
+		(uuid "ffaf4810-4ca5-4a18-9a56-548028703d21")
 	)
 	(sheet_instances
 		(path "/"
