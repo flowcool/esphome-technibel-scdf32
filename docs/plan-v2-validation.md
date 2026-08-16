@@ -540,7 +540,10 @@ permitted modification.
    - 100nF ceramic decoupling cap near the XIAO
    - 100nF + 10–100µF near the IR driver
    - Power connector (JST-XH 2-pin or screw terminal)
-2. Re-test: repeat Phase 7 (NEC) and Phase 9 (AC test)
+2. Re-test: repeat the Phase 9 Technibel AC test and confirm the emitted frame with
+   the IR sniffer. The generic NEC test from Phase 7 is not repeated: a valid
+   Technibel frame captured by the sniffer and accepted by the appliance exercises
+   the complete transmitter chain more directly.
 3. Label and store — this is your known-good reference
 
 This board is NOT installed inside the AC. It stays on the bench.
@@ -549,8 +552,7 @@ This board is NOT installed inside the AC. It stays on the bench.
 
 | Test | Pass | Fail action |
 |------|------|-------------|
-| NEC test via KY-022: passes | Solder OK | Visual inspect, continuity test |
-| Technibel AC test: passes | PCB validated | Reflow suspect joints |
+| Technibel frame captured by IR sniffer and accepted by AC | PCB validated | Visual inspection, continuity test, reflow suspect joints |
 | No abnormal heat after 10min | No short | Check for solder bridges |
 
 ---
