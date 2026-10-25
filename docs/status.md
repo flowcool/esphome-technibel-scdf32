@@ -68,7 +68,7 @@ avant de dire que c'est prêt.
 ## Découverte annexe historique : repo git ≠ ancien dossier live NAS
 
 `~/claude_project/esphome-technibel-scdf32` (ce repo) et
-`/volume1/docker/homeassistant/esphome/` (dossier monté dans le conteneur
+`/volume1/home-assistant/esphome/config/` (dossier monté dans le conteneur
 ESPHome, ce que voit réellement le dashboard) sont **deux copies séparées**.
 Avant cette session, `ir-technibel-clim.yaml` n'existait que dans le repo,
 pas côté NAS (seule `libraries/technibel_ir.h` avait été copiée). À garder
@@ -115,5 +115,5 @@ Ce qui reste non concluant :
    `ir-technibel-clim.yaml` pour éviter de reperdre la connexion HA au
    prochain reboot/reflash
 7. Se souvenir de copier tout futur changement du repo vers le dossier live
-   NAS (`/volume1/docker/homeassistant/esphome/`) — les deux ne se
+   NAS (`/volume1/home-assistant/esphome/config/`) — les deux ne se
    synchronisent pas automatiquement
